@@ -1,0 +1,71 @@
+﻿@font-face {
+  font-family: 'HGPGothicM';
+  src: url('/content/fonts/HGPGothicM.eot');
+  src: url('/content/fonts/HGPGothicM.eot?#iefix') format('embedded-opentype'),
+       url('/content/fonts/HGPGothicM.woff') format('woff'),
+       url('/content/fonts/HGPGothicM.ttf') format('truetype')
+}
+
+body {
+    background-image: url("/images/bg.png")
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding: 0 15px 20px;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+p > span {
+    display: inline-block;
+}
+
+#search-btn {
+  cursor: pointer;
+}
+
+#avatar {
+    margin: -9px 5px -6px 5px;
+    border-radius: 4px;
+}
+
+#twitter-timeline {
+  padding: 0 0 0 15px;
+}
+
+.header-right {
+  float: right;
+  margin-top: 2px;
+}
+
+.twitter-timeline {
+  width: 100% !important;
+}
+
+.twitter-follow-button {
+  float: right;
+  margin-top: -2px;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+@media (min-width: 992px) {
+    #serverInfoName {
+        font-size: 24px;
+    }
+    #serverInfo {
+        top: 50px;
+        line-height: 25px;
+    }
+    .move-right-md {
+        text-align: right;
+    }
+}

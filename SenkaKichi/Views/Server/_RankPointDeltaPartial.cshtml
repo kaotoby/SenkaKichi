@@ -1,0 +1,20 @@
+﻿@model SenkaKichi.DbModels.SenkaData
+@if (Model.RankPointDelta.HasValue) {
+    int value = Model.RankPointDelta.Value;
+    if (Model.RankPointDeltaExtra.HasValue) {
+        value -= Model.RankPointDeltaExtra.Value;
+    }
+    if (value < 50) {
+        <span class="cl-gray">(+@value)</span>
+    } else if (value < 100) {
+        <span class="cl-green">(+@value)</span>
+    } else if (value < 150) {
+        <span class="cl-blue">(+@value)</span>
+    } else {
+        <span class="cl-blue font-bold">(+@value)</span>
+    }
+}
+@if (Model.RankPointDeltaExtra.HasValue) {
+    int value = Model.RankPointDeltaExtra.Value;
+    <span class="cl-red font-bold">(+@value)</span>
+}

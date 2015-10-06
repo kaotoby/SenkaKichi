@@ -1,0 +1,20 @@
+﻿<div itemscope itemtype="http://schema.org/WebSite">
+    <meta itemprop="url" content="https://www.senka.me/" />
+    <form itemprop="potentialAction" itemscope itemtype="http://schema.org/SearchAction"
+          id="search-form" method="get" action="/player/search">
+        <meta itemprop="target" content="https://www.senka.me/player/search?q={q}">
+        <div class="input-group">
+            <input itemprop="query-input" type="search" name="q" class="form-control typeahead" placeholder="提督を検索" autocomplete="off" required />
+
+            <select class="form-control" name="server">
+                <option value="0">全サーバ</option>
+                @foreach (var server in SenkaKichi.Models.SenkaRepository.Servers.Values) {
+                    <option value="@server.ServerId">@server.NickName</option>
+                }
+            </select>
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </div>
+    </form>
+</div>

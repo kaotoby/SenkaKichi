@@ -1,0 +1,29 @@
+﻿@array: 
+  "blue" #337ab7, 
+  "green" #468847, 
+  "yellow" #f0ad4e, 
+  "red" #b13f3c, 
+  "gray" #999, 
+  "dark-gray" #444, 
+  "brown" #84774B, 
+  "white" #ddd;
+
+.creatColorClasses(@i: 1) when(@i <= length(@array)) {
+  @name: e(extract(extract(@array, @i), 1));
+
+  .cl-@{name} {
+    color: extract(extract(@array, @i), 2);
+  }
+
+  .bcl-@{name} {
+    background-color: fade(extract(extract(@array, @i), 2), 30%);
+  }
+
+  .creatColorClasses((@i + 1));
+}
+
+.creatColorClasses();
+
+.font-bold {
+  font-weight: bold;
+}

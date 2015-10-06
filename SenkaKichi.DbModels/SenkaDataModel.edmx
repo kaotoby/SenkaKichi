@@ -1,0 +1,762 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="SenkaContext.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AspNetLoginProviders">
+          <Key>
+            <PropertyRef Name="LoginProviderId" />
+          </Key>
+          <Property Name="LoginProviderId" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="20" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserFriends">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="FriendId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="FriendId" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogins">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="LoginProviderId" />
+          </Key>
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="LoginProviderId" Type="tinyint" Nullable="false" />
+          <Property Name="ProviderKey" Type="bigint" Nullable="false" />
+          <Property Name="AccessToken" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="AccessTokenSecret" Type="varchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PlayerId" Type="int" />
+          <Property Name="IsPlayerVerified" Type="bit" Nullable="false" />
+          <Property Name="PlayerVerifyToken" Type="varchar" MaxLength="255" />
+          <Property Name="PlayerVerifyEndTime" Type="datetime2" Precision="2" />
+          <Property Name="IsPlayerPublic" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DateInfoes">
+          <Key>
+            <PropertyRef Name="DateId" />
+          </Key>
+          <Property Name="DateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="smalldatetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Players">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="ServerId" Type="tinyint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="SenkaDatas">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+            <PropertyRef Name="DateId" />
+          </Key>
+          <Property Name="PlayerId" Type="int" Nullable="false" />
+          <Property Name="DateId" Type="int" Nullable="false" />
+          <Property Name="Ranking" Type="smallint" Nullable="false" />
+          <Property Name="RankingDelta" Type="smallint" />
+          <Property Name="RankPoint" Type="smallint" Nullable="false" />
+          <Property Name="RankPointDelta" Type="smallint" />
+          <Property Name="Experience" Type="int" />
+          <Property Name="ExperienceDelta" Type="int" />
+          <Property Name="Comment" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Level" Type="tinyint" Nullable="false" />
+          <Property Name="RankTypeId" Type="tinyint" Nullable="false" />
+          <Property Name="Medals" Type="smallint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ServerAuthorizes">
+          <Key>
+            <PropertyRef Name="ServerId" />
+          </Key>
+          <Property Name="ServerId" Type="tinyint" Nullable="false" />
+          <Property Name="Username" Type="varchar" MaxLength="255" />
+          <Property Name="Password" Type="varchar" MaxLength="255" />
+          <Property Name="IpAddress" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Token" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="ServerMaintenances">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StartTime" Type="smalldatetime" Nullable="false" />
+          <Property Name="EndTime" Type="smalldatetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Servers">
+          <Key>
+            <PropertyRef Name="ServerId" />
+          </Key>
+          <Property Name="ServerId" Type="tinyint" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="NickName" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="LastUpdated" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TwitterInfoes">
+          <Key>
+            <PropertyRef Name="AspNetUserId" />
+          </Key>
+          <Property Name="AspNetUserId" Type="int" Nullable="false" />
+          <Property Name="ScreenName" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Description" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="Location" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="AvatarUrl" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="BannerUrl" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="UserSite" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="UserSiteUrl" Type="varchar" MaxLength="2000" Nullable="false" />
+          <Property Name="ProfileUpdateTime" Type="smalldatetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_AspNetLoginProviderAspNetUserLogin">
+          <End Role="AspNetLoginProviders" Type="Self.AspNetLoginProviders" Multiplicity="1" />
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetLoginProviders">
+              <PropertyRef Name="LoginProviderId" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="LoginProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AspNetUserAspNetUserFriend">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserFriends" Type="Self.AspNetUserFriends" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="AspNetUserFriends">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AspNetUserAspNetUserLogin">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AspNetUserTwitterInfo">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TwitterInfoes" Type="Self.TwitterInfoes" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="UserId" />
+            </Principal>
+            <Dependent Role="TwitterInfoes">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DateInfoSenkaData">
+          <End Role="DateInfoes" Type="Self.DateInfoes" Multiplicity="1" />
+          <End Role="SenkaDatas" Type="Self.SenkaDatas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DateInfoes">
+              <PropertyRef Name="DateId" />
+            </Principal>
+            <Dependent Role="SenkaDatas">
+              <PropertyRef Name="DateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DateInfoServers">
+          <End Role="DateInfoes" Type="Self.DateInfoes" Multiplicity="1" />
+          <End Role="Servers" Type="Self.Servers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DateInfoes">
+              <PropertyRef Name="DateId" />
+            </Principal>
+            <Dependent Role="Servers">
+              <PropertyRef Name="LastUpdated" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PlayerAspNetUser">
+          <End Role="Players" Type="Self.Players" Multiplicity="0..1" />
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Players">
+              <PropertyRef Name="PlayerId" />
+            </Principal>
+            <Dependent Role="AspNetUsers">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PlayerSenkaData">
+          <End Role="Players" Type="Self.Players" Multiplicity="1" />
+          <End Role="SenkaDatas" Type="Self.SenkaDatas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Players">
+              <PropertyRef Name="PlayerId" />
+            </Principal>
+            <Dependent Role="SenkaDatas">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServerAuthorizeServer">
+          <End Role="ServerAuthorizes" Type="Self.ServerAuthorizes" Multiplicity="1" />
+          <End Role="Servers" Type="Self.Servers" Multiplicity="0..1" />
+          <ReferentialConstraint>
+            <Principal Role="ServerAuthorizes">
+              <PropertyRef Name="ServerId" />
+            </Principal>
+            <Dependent Role="Servers">
+              <PropertyRef Name="ServerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServerPlayer">
+          <End Role="Servers" Type="Self.Servers" Multiplicity="1" />
+          <End Role="Players" Type="Self.Players" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Servers">
+              <PropertyRef Name="ServerId" />
+            </Principal>
+            <Dependent Role="Players">
+              <PropertyRef Name="ServerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SenkaContextStoreContainer">
+          <EntitySet Name="AspNetLoginProviders" EntityType="Self.AspNetLoginProviders" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserFriends" EntityType="Self.AspNetUserFriends" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DateInfoes" EntityType="Self.DateInfoes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Players" EntityType="Self.Players" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SenkaDatas" EntityType="Self.SenkaDatas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServerAuthorizes" EntityType="Self.ServerAuthorizes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ServerMaintenances" EntityType="Self.ServerMaintenances" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Servers" EntityType="Self.Servers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TwitterInfoes" EntityType="Self.TwitterInfoes" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_AspNetLoginProviderAspNetUserLogin" Association="Self.FK_AspNetLoginProviderAspNetUserLogin">
+            <End Role="AspNetLoginProviders" EntitySet="AspNetLoginProviders" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AspNetUserAspNetUserFriend" Association="Self.FK_AspNetUserAspNetUserFriend">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserFriends" EntitySet="AspNetUserFriends" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AspNetUserAspNetUserLogin" Association="Self.FK_AspNetUserAspNetUserLogin">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AspNetUserTwitterInfo" Association="Self.FK_AspNetUserTwitterInfo">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="TwitterInfoes" EntitySet="TwitterInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DateInfoSenkaData" Association="Self.FK_DateInfoSenkaData">
+            <End Role="DateInfoes" EntitySet="DateInfoes" />
+            <End Role="SenkaDatas" EntitySet="SenkaDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DateInfoServers" Association="Self.FK_DateInfoServers">
+            <End Role="DateInfoes" EntitySet="DateInfoes" />
+            <End Role="Servers" EntitySet="Servers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PlayerAspNetUser" Association="Self.FK_PlayerAspNetUser">
+            <End Role="Players" EntitySet="Players" />
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PlayerSenkaData" Association="Self.FK_PlayerSenkaData">
+            <End Role="Players" EntitySet="Players" />
+            <End Role="SenkaDatas" EntitySet="SenkaDatas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServerAuthorizeServer" Association="Self.FK_ServerAuthorizeServer">
+            <End Role="ServerAuthorizes" EntitySet="ServerAuthorizes" />
+            <End Role="Servers" EntitySet="Servers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServerPlayer" Association="Self.FK_ServerPlayer">
+            <End Role="Servers" EntitySet="Servers" />
+            <End Role="Players" EntitySet="Players" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="SenkaDataModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="SenkaContext" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DateInfoes" EntityType="SenkaDataModel.DateInfo" />
+          <EntitySet Name="SenkaDatas" EntityType="SenkaDataModel.SenkaData" />
+          <AssociationSet Name="DateInfoSenkaData" Association="SenkaDataModel.DateInfoSenkaData">
+            <End Role="DateInfo" EntitySet="DateInfoes" />
+            <End Role="SenkaData" EntitySet="SenkaDatas" />
+          </AssociationSet>
+          <EntitySet Name="Servers" EntityType="SenkaDataModel.Server" />
+          <EntitySet Name="Players" EntityType="SenkaDataModel.Player" />
+          <AssociationSet Name="PlayerSenkaData" Association="SenkaDataModel.PlayerSenkaData">
+            <End EntitySet="Players" Role="Player" />
+            <End EntitySet="SenkaDatas" Role="SenkaData" />
+          </AssociationSet>
+          <EntitySet Name="AspNetUsers" EntityType="SenkaDataModel.AspNetUser" />
+          <EntitySet Name="AspNetUserLogins" EntityType="SenkaDataModel.AspNetUserLogin" />
+          <AssociationSet Name="AspNetUserAspNetUserLogin" Association="SenkaDataModel.AspNetUserAspNetUserLogin">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <EntitySet Name="AspNetUserFriends" EntityType="SenkaDataModel.AspNetUserFriend" />
+          <AssociationSet Name="AspNetUserAspNetUserFriend" Association="SenkaDataModel.AspNetUserAspNetUserFriend">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserFriend" EntitySet="AspNetUserFriends" />
+          </AssociationSet>
+          <AssociationSet Name="PlayerAspNetUser" Association="SenkaDataModel.PlayerAspNetUser">
+            <End Role="Player" EntitySet="Players" />
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+          </AssociationSet>
+          <EntitySet Name="AspNetLoginProviders" EntityType="SenkaDataModel.AspNetLoginProvider" />
+          <AssociationSet Name="AspNetLoginProviderAspNetUserLogin" Association="SenkaDataModel.AspNetLoginProviderAspNetUserLogin">
+            <End Role="AspNetLoginProvider" EntitySet="AspNetLoginProviders" />
+            <End Role="AspNetUserLogin" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <EntitySet Name="TwitterInfoes" EntityType="SenkaDataModel.TwitterInfo" />
+          <AssociationSet Name="FK_AspNetUserTwitterInfo" Association="SenkaDataModel.FK_AspNetUserTwitterInfo">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="TwitterInfo" EntitySet="TwitterInfoes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DateInfoServers" Association="SenkaDataModel.FK_DateInfoServers">
+            <End Role="DateInfo" EntitySet="DateInfoes" />
+            <End Role="Server" EntitySet="Servers" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ServerPlayer" Association="SenkaDataModel.FK_ServerPlayer">
+            <End Role="Server" EntitySet="Servers" />
+            <End Role="Player" EntitySet="Players" />
+          </AssociationSet>
+          <EntitySet Name="ServerAuthorizes" EntityType="SenkaDataModel.ServerAuthorize" />
+          <AssociationSet Name="FK_ServerAuthorizeServer" Association="SenkaDataModel.FK_ServerAuthorizeServer">
+            <End Role="ServerAuthorize" EntitySet="ServerAuthorizes" />
+            <End Role="Server" EntitySet="Servers" />
+          </AssociationSet>
+          <EntitySet Name="ServerMaintenances" EntityType="SenkaDataModel.ServerMaintenance" />
+          </EntityContainer>
+        <EntityType Name="DateInfo">
+          <Key>
+            <PropertyRef Name="DateId" />
+          </Key>
+          <Property Name="DateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" cg:SetterAccess="Public" />
+          <NavigationProperty Name="SenkaDatas" Relationship="SenkaDataModel.DateInfoSenkaData" FromRole="DateInfo" ToRole="SenkaData" cg:SetterAccess="Private" />
+          <NavigationProperty Name="Servers" Relationship="SenkaDataModel.FK_DateInfoServers" FromRole="DateInfo" ToRole="Server" />
+        </EntityType>
+        <EntityType Name="SenkaData" >
+          <Key>
+            <PropertyRef Name="DateId" />
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="DateId" Type="Int32" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="PlayerId" Type="Int32" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="Ranking" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="RankingDelta" Type="Int16" Nullable="true" cg:SetterAccess="Private" />
+          <Property Name="RankPoint" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="RankPointDelta" Type="Int16" Nullable="true" cg:SetterAccess="Private" />
+          <Property Name="Experience" Type="Int32" Nullable="true" cg:SetterAccess="Internal" />
+          <Property Name="ExperienceDelta" Type="Int32" cg:SetterAccess="Private" />
+          <Property Name="Comment" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" cg:SetterAccess="Internal" />
+          <Property Name="Level" Type="Byte" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="RankTypeId" Type="Byte" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="Medals" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
+          <NavigationProperty Name="DateInfo" Relationship="SenkaDataModel.DateInfoSenkaData" FromRole="SenkaData" ToRole="DateInfo" cg:SetterAccess="Private" />
+          <NavigationProperty Name="Player" cg:SetterAccess="Private" Relationship="SenkaDataModel.PlayerSenkaData" FromRole="SenkaData" ToRole="Player" />
+        </EntityType>
+        <Association Name="DateInfoSenkaData">
+          <End Type="SenkaDataModel.DateInfo" Role="DateInfo" Multiplicity="1" />
+          <End Type="SenkaDataModel.SenkaData" Role="SenkaData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DateInfo">
+              <PropertyRef Name="DateId" />
+            </Principal>
+            <Dependent Role="SenkaData">
+              <PropertyRef Name="DateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Server">
+          <Key>
+            <PropertyRef Name="ServerId" />
+          </Key>
+          <Property Name="ServerId" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" cg:SetterAccess="Private" />
+          <Property Name="NickName" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" cg:SetterAccess="Private" />
+          <Property Name="LastUpdated" Type="Int32" Nullable="false" cg:SetterAccess="Internal" />
+          <NavigationProperty Name="DateInfo" Relationship="SenkaDataModel.FK_DateInfoServers" FromRole="Server" ToRole="DateInfo" />
+          <NavigationProperty Name="ServerAuthorize" Relationship="SenkaDataModel.FK_ServerAuthorizeServer" FromRole="Server" ToRole="ServerAuthorize" cg:SetterAccess="Private" />
+        </EntityType>
+        <EntityType Name="Player">
+          <Key>
+            <PropertyRef Name="PlayerId" />
+          </Key>
+          <Property Name="PlayerId" Nullable="false" Type="Int32" />
+          <Property Name="Name" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" Type="String" />
+          <NavigationProperty Name="SenkaDatas" Relationship="SenkaDataModel.PlayerSenkaData" FromRole="Player" ToRole="SenkaData" cg:SetterAccess="Private" />
+          <NavigationProperty Name="AspNetUsers" Relationship="SenkaDataModel.PlayerAspNetUser" FromRole="Player" ToRole="AspNetUser" />
+          <Property Name="ServerId" Type="Byte" Nullable="false" />
+          <NavigationProperty Name="Server" Relationship="SenkaDataModel.FK_ServerPlayer" FromRole="Player" ToRole="Server" />
+        </EntityType>
+        <Association Name="PlayerSenkaData">
+          <End Type="SenkaDataModel.Player" Multiplicity="1" Role="Player" />
+          <End Type="SenkaDataModel.SenkaData" Multiplicity="*" Role="SenkaData" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="PlayerId" />
+            </Principal>
+            <Dependent Role="SenkaData">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AspNetUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
+          <Property Name="PlayerId" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="UserLogins" Relationship="SenkaDataModel.AspNetUserAspNetUserLogin" FromRole="AspNetUser" ToRole="AspNetUserLogin" cg:SetterAccess="Public" />
+          <Property Name="IsPlayerVerified" Type="Boolean" Nullable="false" DefaultValue="false" />
+          <NavigationProperty Name="Friends" Relationship="SenkaDataModel.AspNetUserAspNetUserFriend" FromRole="AspNetUser" ToRole="AspNetUserFriend" cg:SetterAccess="Private" />
+          <Property Name="PlayerVerifyToken" Type="String" Unicode="false" MaxLength="255" FixedLength="false" Nullable="true" />
+          <Property Name="PlayerVerifyEndTime" Type="DateTime" Precision="2" Nullable="true" />
+          <Property Name="IsPlayerPublic" Type="Boolean" Nullable="false" DefaultValue="true" />
+          <NavigationProperty Name="Player" Relationship="SenkaDataModel.PlayerAspNetUser" FromRole="AspNetUser" ToRole="Player" cg:SetterAccess="Private" />
+          <NavigationProperty Name="TwitterInfo" Relationship="SenkaDataModel.FK_AspNetUserTwitterInfo" FromRole="AspNetUser" ToRole="TwitterInfo" />
+          </EntityType>
+        <EntityType Name="AspNetUserLogin" >
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="LoginProviderId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="LoginProviderId" Type="Byte" Nullable="false" cg:SetterAccess="Private" />
+          <Property Name="ProviderKey" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="SenkaDataModel.AspNetUserAspNetUserLogin" FromRole="AspNetUserLogin" ToRole="AspNetUser" cg:SetterAccess="Private" />
+          <Property Name="AccessToken" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="AccessTokenSecret" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="LoginProvider" Relationship="SenkaDataModel.AspNetLoginProviderAspNetUserLogin" FromRole="AspNetUserLogin" ToRole="AspNetLoginProvider" />
+        </EntityType>
+        <Association Name="AspNetUserAspNetUserLogin">
+          <End Type="SenkaDataModel.AspNetUser" Role="AspNetUser" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="SenkaDataModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" >
+          </End>
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogin">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AspNetUserFriend">
+          <Key>
+            <PropertyRef Name="FriendId" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="FriendId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="AspNetUserAspNetUserFriend">
+          <End Type="SenkaDataModel.AspNetUser" Role="AspNetUser" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="SenkaDataModel.AspNetUserFriend" Role="AspNetUserFriend" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserFriend">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PlayerAspNetUser">
+          <End Type="SenkaDataModel.Player" Role="Player" Multiplicity="0..1" />
+          <End Type="SenkaDataModel.AspNetUser" Role="AspNetUser" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Player">
+              <PropertyRef Name="PlayerId" />
+            </Principal>
+            <Dependent Role="AspNetUser">
+              <PropertyRef Name="PlayerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="AspNetLoginProvider">
+          <Key>
+            <PropertyRef Name="LoginProviderId" />
+          </Key>
+          <Property Name="LoginProviderId" Type="Byte" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="UserLogins" Relationship="SenkaDataModel.AspNetLoginProviderAspNetUserLogin" FromRole="AspNetLoginProvider" ToRole="AspNetUserLogin" cg:SetterAccess="Private" />
+        </EntityType>
+        <Association Name="AspNetLoginProviderAspNetUserLogin">
+          <End Type="SenkaDataModel.AspNetLoginProvider" Role="AspNetLoginProvider" Multiplicity="1" />
+          <End Type="SenkaDataModel.AspNetUserLogin" Role="AspNetUserLogin" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetLoginProvider">
+              <PropertyRef Name="LoginProviderId" />
+            </Principal>
+            <Dependent Role="AspNetUserLogin">
+              <PropertyRef Name="LoginProviderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TwitterInfo">
+          <Key>
+            <PropertyRef Name="AspNetUserId" />
+          </Key>
+          <Property Name="AspNetUserId" Type="Int32" Nullable="false" />
+          <Property Name="ScreenName" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="Location" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="AvatarUrl" Type="String" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="BannerUrl" Type="String" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="UserSite" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="UserSiteUrl" Type="String" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="false" />
+          <Property Name="ProfileUpdateTime" Type="DateTime" Nullable="false" Precision="0" />
+          <NavigationProperty Name="AspNetUser" Relationship="SenkaDataModel.FK_AspNetUserTwitterInfo" FromRole="TwitterInfo" ToRole="AspNetUser" />
+        </EntityType>
+        <Association Name="FK_AspNetUserTwitterInfo">
+          <End Type="SenkaDataModel.AspNetUser" Role="AspNetUser" Multiplicity="1" >
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="SenkaDataModel.TwitterInfo" Role="TwitterInfo" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="TwitterInfo">
+              <PropertyRef Name="AspNetUserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DateInfoServers">
+          <End Type="SenkaDataModel.DateInfo" Role="DateInfo" Multiplicity="1" />
+          <End Type="SenkaDataModel.Server" Role="Server" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DateInfo">
+              <PropertyRef Name="DateId" />
+            </Principal>
+            <Dependent Role="Server">
+              <PropertyRef Name="LastUpdated" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ServerPlayer">
+          <End Type="SenkaDataModel.Server" Role="Server" Multiplicity="1" />
+          <End Type="SenkaDataModel.Player" Role="Player" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Server">
+              <PropertyRef Name="ServerId" />
+            </Principal>
+            <Dependent Role="Player">
+              <PropertyRef Name="ServerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ServerAuthorize">
+          <Key>
+            <PropertyRef Name="ServerId" />
+          </Key>
+          <Property Name="ServerId" Type="Byte" Nullable="false" cg:SetterAccess="Private" />
+          <Property Name="Username" Type="String" MaxLength="255" FixedLength="false" Unicode="false" cg:GetterAccess="Internal" cg:SetterAccess="Private" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" cg:GetterAccess="Internal" cg:SetterAccess="Private" />
+          <Property Name="IpAddress" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" cg:GetterAccess="Internal" cg:SetterAccess="Internal" />
+          <Property Name="Token" Type="String" MaxLength="50" FixedLength="false" Unicode="false" cg:GetterAccess="Internal" cg:SetterAccess="Internal" />
+          <NavigationProperty Name="Server" Relationship="SenkaDataModel.FK_ServerAuthorizeServer" FromRole="ServerAuthorize" ToRole="Server" cg:SetterAccess="Private" />
+        </EntityType>
+        <Association Name="FK_ServerAuthorizeServer">
+          <End Type="SenkaDataModel.ServerAuthorize" Role="ServerAuthorize" Multiplicity="1" />
+          <End Type="SenkaDataModel.Server" Role="Server" Multiplicity="1" />
+          <ReferentialConstraint>
+            <Principal Role="ServerAuthorize">
+              <PropertyRef Name="ServerId" />
+            </Principal>
+            <Dependent Role="Server">
+              <PropertyRef Name="ServerId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ServerMaintenance">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
+          <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="0" cg:SetterAccess="Internal" />
+          <Property Name="EndTime" Type="DateTime" Nullable="false" Precision="0" cg:SetterAccess="Internal" />
+        </EntityType>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="SenkaContextStoreContainer" CdmEntityContainer="SenkaContext">
+    <EntitySetMapping Name="DateInfoes">
+      <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.DateInfo)">
+        <MappingFragment StoreEntitySet="DateInfoes">
+          <ScalarProperty Name="DateId" ColumnName="DateId" />
+          <ScalarProperty Name="Date" ColumnName="Date" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SenkaDatas">
+      <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.SenkaData)">
+        <MappingFragment StoreEntitySet="SenkaDatas">
+                <ScalarProperty Name="ExperienceDelta" ColumnName="ExperienceDelta" />
+                <ScalarProperty Name="RankingDelta" ColumnName="RankingDelta" />
+                <ScalarProperty Name="RankPointDelta" ColumnName="RankPointDelta" />
+                <ScalarProperty Name="DateId" ColumnName="DateId" />
+          <ScalarProperty Name="Ranking" ColumnName="Ranking" />
+          <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+          <ScalarProperty Name="Comment" ColumnName="Comment" />
+          <ScalarProperty Name="Level" ColumnName="Level" />
+          <ScalarProperty Name="RankPoint" ColumnName="RankPoint" />
+          <ScalarProperty Name="Experience" ColumnName="Experience" />
+          <ScalarProperty Name="RankTypeId" ColumnName="RankTypeId" />
+          <ScalarProperty Name="Medals" ColumnName="Medals" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Servers">
+      <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.Server)">
+        <MappingFragment StoreEntitySet="Servers">
+                <ScalarProperty Name="ServerId" ColumnName="ServerId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="NickName" ColumnName="NickName" />
+          <ScalarProperty Name="LastUpdated" ColumnName="LastUpdated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+          <EntitySetMapping Name="Players">
+            <EntityTypeMapping TypeName="SenkaDataModel.Player">
+              <MappingFragment StoreEntitySet="Players">
+                <ScalarProperty Name="ServerId" ColumnName="ServerId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.AspNetUser)">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="IsPlayerPublic" ColumnName="IsPlayerPublic" />
+                <ScalarProperty Name="PlayerVerifyEndTime" ColumnName="PlayerVerifyEndTime" />
+                <ScalarProperty Name="PlayerVerifyToken" ColumnName="PlayerVerifyToken" />
+                <ScalarProperty Name="IsPlayerVerified" ColumnName="IsPlayerVerified" />
+                <ScalarProperty Name="PlayerId" ColumnName="PlayerId" />
+                <ScalarProperty Name="Id" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserFriends">
+            <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.AspNetUserFriend)">
+              <MappingFragment StoreEntitySet="AspNetUserFriends">
+                <ScalarProperty Name="FriendId" ColumnName="FriendId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.AspNetUserLogin)">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="LoginProviderId" ColumnName="LoginProviderId" />
+                <ScalarProperty Name="AccessTokenSecret" ColumnName="AccessTokenSecret" />
+                <ScalarProperty Name="AccessToken" ColumnName="AccessToken" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetLoginProviders">
+            <EntityTypeMapping TypeName="SenkaDataModel.AspNetLoginProvider">
+              <MappingFragment StoreEntitySet="AspNetLoginProviders">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="LoginProviderId" ColumnName="LoginProviderId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TwitterInfoes">
+            <EntityTypeMapping TypeName="SenkaDataModel.TwitterInfo">
+              <MappingFragment StoreEntitySet="TwitterInfoes">
+                <ScalarProperty Name="ProfileUpdateTime" ColumnName="ProfileUpdateTime" />
+                <ScalarProperty Name="UserSiteUrl" ColumnName="UserSiteUrl" />
+                <ScalarProperty Name="UserSite" ColumnName="UserSite" />
+                <ScalarProperty Name="BannerUrl" ColumnName="BannerUrl" />
+                <ScalarProperty Name="AvatarUrl" ColumnName="AvatarUrl" />
+                <ScalarProperty Name="Location" ColumnName="Location" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ScreenName" ColumnName="ScreenName" />
+                <ScalarProperty Name="AspNetUserId" ColumnName="AspNetUserId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServerAuthorizes">
+            <EntityTypeMapping TypeName="SenkaDataModel.ServerAuthorize">
+              <MappingFragment StoreEntitySet="ServerAuthorizes">
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="ServerId" ColumnName="ServerId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ServerMaintenances">
+            <EntityTypeMapping TypeName="SenkaDataModel.ServerMaintenance">
+              <MappingFragment StoreEntitySet="ServerMaintenances">
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -1,0 +1,27 @@
+﻿@model SenkaKichi.ViewModels.Server.RankingViewModel
+
+<header class="page-header">
+    <h1>@Model.Server.Name <br class="visible-sm visible-xs" /><small><time datetime="@Model.Server.DateInfo.Date.ToString("s")">@Model.Server.DateInfo</time></small></h1>
+</header>
+<section class="table table-bordered table-condensed table-hover">
+    <header class="tr thead">
+        <span class="td">順位</span>
+        <span class="td hidden-sm hidden-xs">Lv.</span>
+        <span class="td">提督名</span>
+        <span class="td hidden-sm hidden-xs">階級</span>
+        <span class="td">コメント</span>
+        <span class="td">戦果</span>
+        <span class="td">勲章</span>
+    </header>
+    @foreach (var data in Model.Data) {
+        <a id="rank@(data.Ranking)" href="/player/@data.PlayerId" class="tr">
+            <span class="td">@(data.Ranking)位 @Html.Partial("_RankingDeltaPartial", data.RankingDelta, new ViewDataDictionary())</span>
+            <span class="td hidden-sm hidden-xs">@data.Level</span>
+            <span class="td">@data.Player.Name</span>
+            <span class="td hidden-sm hidden-xs">@data.RankType</span>
+            <span class="td">@data.Comment</span>
+            <span class="td">@data.RankPoint @Html.Partial("_RankPointDeltaPartial", data)</span>
+            <span class="td">@Html.Partial("_RankingMedalPartial", data.Medals)</span>
+        </a>
+    }
+</section>

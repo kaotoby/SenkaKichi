@@ -1,0 +1,19 @@
+﻿@model IEnumerable<SenkaKichi.Models.ActivityData>
+<table class="table table-bordered table-condensed">
+    <thead class="panel-heading">
+        <tr>
+            <td>日付</td>
+            <td>Lv.</td>
+            <td>コメント</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var data in Model) {
+            <tr>
+                <td>@data.Date</td>
+                <td>@data.Level</td>
+                <td>@data.Comment</td>
+            </tr>
+        }
+    </tbody>
+</table>

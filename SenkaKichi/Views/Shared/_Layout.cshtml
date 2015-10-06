@@ -1,0 +1,93 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    var node = MvcSiteMapProvider.SiteMaps.Current.CurrentNode;
+    string PageTitle = "", PageDescription = "";
+    
+    if (ViewBag.FixedTitle != null && ViewBag.FixedTitle) {
+        PageTitle = ViewBag.Title;
+    } else {
+        string title = ViewBag.Title;
+        if (title == null) {
+            title = node.Title;
+        }
+        PageTitle = string.Format("{0} - {1}", title, "戦果基地");
+    }
+    if (ViewBag.Description != null) {
+        PageDescription = ViewBag.Description;
+    } else if (node != null) {
+        PageDescription = node.Description;
+    }
+}
+<!DOCTYPE html>
+<html lang="ja">
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="utf-8" />
+    <title>@PageTitle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="keywords" content="戦果基地,戦果速報,戦果,ランキング,艦これ,艦隊これくしょん@(ViewBag.Keywords)">
+    <meta name="description" content="@PageDescription">
+
+@if (node != null) {
+    <link rel="canonical" href="@node.Url">
+    <meta property="fb:app_id" content="509470212541705" />
+    <meta property="og:type" content="@(ViewBag.OgType ?? "article")" />
+    <meta property="og:title" content="@(ViewBag.OgTitle ?? ViewBag.Title)" />
+    <meta property="og:description" content="@(ViewBag.OgDescription ?? ViewBag.Description)" />
+    <meta property="og:url" content="@node.Url" />
+    <meta property="og:site_name" content="戦果基地" />
+    <meta name="twitter:card" content="@(ViewBag.TwitterCardType ?? "summary")" />
+    <meta name="twitter:site:id" content="3149631090" />
+    @RenderSection("Head", required: false)
+}
+    <script>
+        /*GoogleAnalytics*/
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-60726591-1', 'auto');
+        @if (User.Identity.IsAuthenticated) {
+            @Html.Raw(string.Format("ga('set', '&uid', '{0}');", User.Identity.GetUserId()))
+        }
+        ga('require', 'displayfeatures');
+        ga('require', 'linkid', 'linkid.js');
+        ga('send', 'pageview');
+    </script>
+    @Styles.Render("~/styles/bootstrap")
+    @Styles.Render("~/styles/site")
+    <script async src="https://platform.twitter.com/widgets.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header pull-left">
+                <a class="navbar-brand" href="/">戦果<br class="visible-xs" />基地</a>
+                @Html.Partial("_SitemapPartial")
+            </div>
+            <div class="navbar-header pull-right">
+                <ul class="nav navbar-nav pull-left">
+                    @*@Html.Action("_LoginPartial", "Shared", true)*@
+                </ul>
+            </div>
+        </div>
+    </nav>
+    @RenderSection("BeforeContainer", required: false)
+    <article class="container body-content">
+        @Html.Action("_AlertPartial", "Shared", true)
+        @RenderBody()
+    </article>
+    <footer class="panel-footer">
+        <section class="container">
+            <p>&copy; 2015 - 戦果基地</p>
+            <p style="font-size:0.6em">Page created in @ViewBag.ElapsedTime ms with <a href="http://www.asp.net/mvc">ASP.NET MVC</a></p>
+        </section>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/viewmodel")
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,10 @@
+﻿<nav class="list-group">
+    @foreach (var server in SenkaKichi.Models.SenkaRepository.Servers.Values) {
+        <a class="list-group-item" href="/server/@(server.ServerId)/ranking">
+            @if (DateTime.Now.AddHours(-12) < server.DateInfo.Date) {
+                <span class="badge">最新</span>
+            }
+            @server.Name
+        </a>
+    }
+</nav>

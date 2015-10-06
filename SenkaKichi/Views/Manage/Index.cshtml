@@ -1,0 +1,37 @@
+﻿@model SenkaKichi.DbModels.AspNetUser
+@{
+    ViewBag.Title = "Manage";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<div>
+    <h4>Change your account settings</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Password:</dt>
+        <dd>
+            @if (Model.IsPlayerVerified) {
+                Html.ActionLink("Change your password", "ChangePassword");
+            } else {
+                if (Model.PlayerVerifyToken == null) {
+                    <p>get token</p>
+	            } else {
+                    <p>verify</p>
+	            }
+            }
+        </dd>
+        <dt>External Logins:</dt>
+        <dd>
+            @Model.UserLogins.Count [
+            @Html.ActionLink("Manage", "ManageLogins") ]
+        </dd>
+        <dt>Public Profile:</dt>
+        <dd>
+            @Html.RadioButtonFor(m => m.IsPlayerPublic, true) Yes
+            @Html.RadioButtonFor(m => m.IsPlayerPublic, false) No
+        </dd>
+
+    </dl>
+</div>

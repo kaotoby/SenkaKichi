@@ -1,0 +1,31 @@
+﻿@model SenkaKichi.DbModels.AspNetUser
+@if (Model != null) {
+    <li class="dropdown pull-right">
+        @using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logout" })) {
+            @Html.AntiForgeryToken()
+        }
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="hidden-xs">@Model.UserName</span>
+            <img src="@Model.TwitterInfo.AvatarUrl" id="avatar" alt="Avatar" width="32" />
+        </a>
+        <ul class="dropdown-menu dropdown-menu-style" role="menu">
+            <li>@Html.ActionLink("Manage", "Index", "Manage")</li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li class="divider"></li>
+            <li><a href="javascript:$('#logout').submit()">ログアウト</a></li>
+        </ul>
+    </li>
+} else {
+    <li class="pull-right">
+        @using (Html.BeginForm("ExternalLogin", "Account", FormMethod.Post, new { id = "login" })) {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("provider", "Twitter")
+            @Html.Hidden("returnUrl", Request.RawUrl)
+        }
+        <a href="javascript:$('#login').submit()">
+            <span class="hidden-xs">Twitterで</span>ログイン
+            <img alt="Twitter Bird" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAQCAYAAAD0xERiAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAArJJREFUeNqMlE9IFHEUx9/7zezsus7O7Mysu2s4tIckKwgLtTqkRkRRQoUU1skiijpEnfKgQVmkh+jkTeikFlkKdekQbpcgkBjoD5GS6y3Ifwuz664zO9Pvt/7bXct88Gb4/ebxee993+83CNTU+4Nn5u5eHIV/mPbgeS0K3hHgPDEAF1zbisNS9vZsV5uhdQ81s5iZzrY4ao9eNhPBO+pY2fbZjtYNQO3hixgnKQZKqozeMsqisOwiuKlk0lnKTvEEuUov6f107dgA0VTlEFEjMidXjGg9r26VwnySfAXpd6KGgUgqEFkDGg8kXCXzEb2WKJHYPAotLJa07tbHUJSBhKLAadEnocdvxmhbzWuwgFRP/AFAXgBAzDt6BCDlEmAgCLvCweGpq033WCw2DXzYqev6pXdJvAPWEjhmMu/uYioBHBcPhiv3pEStngGKjLarOFnjyyn9LF0l2BY/PW82/nBmrvPBCjPn84tkJSvVJeY6uXZT8AMhZONUnBw4GXN+FZRvs+twzXuv4E3bgCItNN8OlonL2sghIL5yGsVtYLmOA0HMfS/cI5f36j+794VvqLxrsLHnjWlDAch7ADh+eV1qORtOVgUGi2CIaPePT34rt9JfFeIYTIv/GtOL2EZnw/bxIhh7xC8cmM6kU9ZcOlu7Vt1mrJwF57b5emghmcJ9XE/m7hhOLNT1JxZPTGTweMYl0b+2R4VvKLP6Ro7oHRRmugWd8GtUxMmmoY9cUhAPWrwogsdbmGtVdagW7GEKYlWZpXnYdXqKHBdj9w59/hiRFCABBVDwFQnPO7bZEiK9fQ2RZyxxQUfrMLqoOf368/mpDB79DUIju3/5KbLjwITmHGN/AN/erA7E60L+cQqaKZ5FMYy9o9RDK15qC9R/sR8DdXuzwaC7laOwRfsjwABy6OvGWk4yNAAAAABJRU5ErkJggg==" />
+        </a>
+    </li>
+}

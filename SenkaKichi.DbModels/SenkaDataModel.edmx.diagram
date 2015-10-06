@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="90b15e95cb97457bb166a237c0232adb" Name="SenkaDiagram" >
+        <EntityTypeShape EntityType="SenkaDataModel.DateInfo" Width="1.5" PointX="2.5" PointY="0.5" />
+        <EntityTypeShape EntityType="SenkaDataModel.SenkaData" Width="1.5" PointX="0.5" PointY="0.5" />
+        <AssociationConnector Association="SenkaDataModel.DateInfoSenkaData" />
+        <EntityTypeShape EntityType="SenkaDataModel.Server" Width="1.5" PointX="4.5" PointY="0.5" />
+        <EntityTypeShape EntityType="SenkaDataModel.Player" Width="1.5" PointX="4.5" PointY="3.375" />
+        <AssociationConnector Association="SenkaDataModel.PlayerSenkaData" />
+        <AssociationConnector Association="SenkaDataModel.FK_DateInfoServers" />
+        <AssociationConnector Association="SenkaDataModel.FK_ServerPlayer" />
+        <EntityTypeShape EntityType="SenkaDataModel.ServerAuthorize" Width="1.5" PointX="6.5" PointY="0.5" />
+        <AssociationConnector Association="SenkaDataModel.FK_ServerAuthorizeServer" />
+        <EntityTypeShape EntityType="SenkaDataModel.ServerMaintenance" Width="1.5" PointX="6.5" PointY="3.375" />
+        </Diagram>
+      <Diagram DiagramId="0f5b419fb9024d7aaa7b07aedf4289bb" Name="UserDiagram" >
+        <EntityTypeShape EntityType="SenkaDataModel.AspNetUser" Width="1.5" PointX="2.5" PointY="0.5" />
+        <EntityTypeShape EntityType="SenkaDataModel.AspNetUserLogin" Width="1.5" PointX="4.5" PointY="0.5" />
+        <AssociationConnector Association="SenkaDataModel.AspNetUserAspNetUserLogin" />
+        <EntityTypeShape EntityType="SenkaDataModel.AspNetUserFriend" Width="1.5" PointX="2.625" PointY="4.5" IsExpanded="true" />
+        <AssociationConnector Association="SenkaDataModel.AspNetUserAspNetUserFriend" />
+        <EntityTypeShape EntityType="SenkaDataModel.Player" Width="1.5" PointX="0.5" PointY="4.125" />
+        <AssociationConnector Association="SenkaDataModel.PlayerAspNetUser" />
+        <EntityTypeShape EntityType="SenkaDataModel.AspNetLoginProvider" Width="1.5" PointX="6.5" PointY="0.5" />
+        <AssociationConnector Association="SenkaDataModel.AspNetLoginProviderAspNetUserLogin" />
+        <EntityTypeShape EntityType="SenkaDataModel.TwitterInfo" Width="1.5" PointX="0.5" PointY="0.5" />
+        <AssociationConnector Association="SenkaDataModel.FK_AspNetUserTwitterInfo" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

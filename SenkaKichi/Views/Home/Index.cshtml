@@ -1,0 +1,80 @@
+﻿@model SenkaKichi.ViewModels.Home.IndexViewModel
+@{
+    ViewBag.FixedTitle = true;
+    ViewBag.Title = "戦果基地";
+    ViewBag.Description = "このサイトは艦これ戦果ランキング集計だけじゃなく、「履歴」と「分析チャート」の機能もあります。各サーバ戦果情報を午前と午後3時半頃更新しております。";
+    ViewBag.OgType = "website";
+}
+@section BeforeContainer {
+    <header class="jumbotron" style="margin-top:-10px">
+        <div class="container">
+            <h1>戦果基地</h1>
+            <p>
+                <span>このサイトは艦これ戦果ランキング集計だけじゃなく、</span>
+                <span>「履歴」と「分析チャート」の機能もあります。</span>
+                <span>各サーバ戦果情報を午前と午後3時半頃更新しております。</span>
+            </p>
+            <p>
+                <span>みなさんにより便利に、</span>
+                <span>楽しくご利用いただけるように、</span>
+                <span>ただいま新機能を鋭意開発中！</span>
+                <span>どうか楽しみにお待ちください。</span>
+            </p>
+            <p>
+                <span>先輩の「<a href="http://noisyk5.jp/kancolle.html">戦果速報</a>」に敬意を！</span>
+            </p>
+        </div>
+    </header>
+}
+<div class="row">
+    <div class="col-sm-9 col-sm-push-3 col-lg-10 col-lg-push-2">
+        <div class="row">
+            <div class="col-md-8">
+                @Html.Partial("../Player/_SearchPartial")
+                <hr />
+                <section class="panel panel-default">
+                    <h4 class="panel-heading">戦果増分 TOP10 <small class="header-right"><time datetime="@Model.DateInfo.Date.ToString("s")">@Model.DateInfo</time></small></h4>
+                    <div class="panel-bod no-paddingy">
+                        @Html.Partial("_RankPointDeltaRankingPartial", Model.RankPointDeltaRanking)
+                    </div>
+                </section>
+                <section class="panel panel-default">
+                    <h4 class="panel-heading">戦果 TOP10 <small class="header-right"><time datetime="@Model.DateInfo.Date.ToString("s")">@Model.DateInfo</time></small></h4>
+                    <div class="panel-body no-padding">
+                        @Html.Partial("_RankPointRankingPartial", Model.RankPointRanking)
+                    </div>
+                </section>
+            </div>
+            <div class="col-md-4">
+                <section class="panel panel-default">
+                    <h3 class="panel-heading">お知らせ</h3>
+                    <div class="panel-body">
+                        @Html.Partial("_AnnouncePartial")
+                    </div>
+                </section>
+                <aside class="panel panel-default">
+                    <h4 class="panel-heading">
+                        Twitter
+                        <a href="https://twitter.com/SenkaKichi"
+                           class="twitter-follow-button header-right"
+                           data-show-count="false"
+                           data-show-screen-name="false"></a>
+                    </h4>
+                    <div id="twitter-timeline" class="panel-body">
+                        <a class="twitter-timeline"
+                           href="https://twitter.com/SenkaKichi"
+                           data-widget-id="595575586023542784"
+                           data-chrome="noheader nofooter transparent"
+                           height="500"></a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3 col-sm-pull-9 col-lg-2 col-lg-pull-10">
+        @Html.Action("_ServerStatePartial", true)
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/search")
+}

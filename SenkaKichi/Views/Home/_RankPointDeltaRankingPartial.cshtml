@@ -1,0 +1,20 @@
+﻿@model IList<SenkaKichi.DbModels.SenkaData>
+<div class="table table-bordered table-condensed table-hover">
+    <div class="tr thead">
+        <span class="td">順位</span>
+        <span class="td">サーバ</span>
+        <span class="td">提督名</span>
+        <span class="td">コメント</span>
+        <span class="td">戦果増分</span>
+    </div>
+    @for (int i = 0; i < Model.Count; i++) {
+        var data = Model[i];
+        <a href="/player/@data.PlayerId" class="tr">
+            <span class="td">@(i + 1)位</span>
+            <span class="td">@SenkaKichi.Models.SenkaRepository.Servers[data.Player.ServerId].NickName</span>
+            <span class="td">@data.Player.Name</span>
+            <span class="td">@data.Comment</span>
+            <span class="td">@Math.Round(data.ExactRankPointDelta, 2)</span>
+        </a>
+    }
+</div>

@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C6957C9D-AF45-4BA8-A514-446A9C1EC9F4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SenkaKichi.DbModels</RootNamespace>
+    <AssemblyName>SenkaKichi.DbModels</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AspNetLoginProvider.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUser.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserFriend.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserLogin.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DateInfo.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Partial\TwitterInfo.cs" />
+    <Compile Include="Partial\ServerMaintenance.cs" />
+    <Compile Include="Partial\AspNetLoginProvider.cs" />
+    <Compile Include="Partial\AspNetUserLogin.cs" />
+    <Compile Include="Partial\AspNetUser.cs" />
+    <Compile Include="Partial\Player.cs" />
+    <Compile Include="Partial\SenkaContext.cs" />
+    <Compile Include="Partial\SenkaData.cs" />
+    <Compile Include="Partial\ServerAuthorize.cs" />
+    <Compile Include="Partial\Server.cs" />
+    <Compile Include="Partial\DateInfo.cs" />
+    <Compile Include="Player.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SenkaData.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SenkaDataModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SenkaDataModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SenkaDataModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SenkaDataModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SenkaDataModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Server.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ServerAuthorize.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ServerMaintenance.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TwitterInfo.cs">
+      <DependentUpon>SenkaDataModel.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+    <EntityDeploy Include="SenkaDataModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>SenkaDataModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="SenkaDataModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SenkaDataModel.Context.cs</LastGenOutput>
+      <DependentUpon>SenkaDataModel.edmx</DependentUpon>
+    </None>
+    <None Include="SenkaDataModel.edmx.diagram">
+      <DependentUpon>SenkaDataModel.edmx</DependentUpon>
+    </None>
+    <None Include="SenkaDataModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SenkaDataModel.cs</LastGenOutput>
+      <DependentUpon>SenkaDataModel.edmx</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

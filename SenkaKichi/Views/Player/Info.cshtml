@@ -1,0 +1,39 @@
+﻿@model SenkaKichi.ViewModels.Player.InfoViewModel
+@{
+    ViewBag.Title = string.Format("{0} ({1})", Model.LastData.Player.Name, Model.LastData.Player.Server.Name);
+    ViewBag.Keywords = string.Format(",{0},{1}", Model.LastData.Player.Name, Model.LastData.Player.Server.Name);
+    ViewBag.OgType = "profile";
+}
+@section Head {
+    <meta property="profile:username" content="@Model.LastData.Player.Name" />
+}
+<header class="page-header row">
+    <div class="col-lg-8 col-md-7">
+        <h1>@Model.LastData.Player.Name <br class="hidden-lg" /><small>@Model.LastData.Comment</small></h1>
+    </div>
+    <div id="serverInfo" class="col-lg-4 col-md-5 move-right-md">
+        <span class="h4" id="serverInfoName">@Model.LastData.Player.Server.Name</span><br class="hidden-sm hidden-xs" />
+        @if (Model.LastData.DateId == Model.LastData.Player.Server.LastUpdated) {
+            <span class="h4">@(Model.LastData.Ranking)位 <small>(@(Model.LastData.RankPoint)戦果)</small></span><br class="hidden-sm hidden-xs" />
+        }
+    </div>
+    <div class="col-md-8">
+        <h4>司令部Level. @Model.LastData.Level <small>[@(Model.LastData.RankType)]</small></h4>
+    </div>
+</header>
+<section id="activity">
+    <h3 class="text-center">アクティビティ</h3>
+    @Html.Partial("_ActivityPartial", Model.Activity)
+</section>
+
+<section id="charts">
+    <div id="RankingChart"></div><br />
+    <div id="RankPointDeltaChart"></div><br />
+    <div id="RankPointChart"></div>
+</section>
+
+@section Scripts{
+    <script>var SenkaChart = @Html.Raw(Model.JsonChart);</script>
+    @Scripts.Render("~/bundles/highcharts")
+    @Scripts.Render("~/bundles/models/player")
+}

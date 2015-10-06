@@ -1,0 +1,79 @@
+﻿@{
+    string Title = "サーバ", Title2 = "情報";
+    int ServerId = -1, PlayerId = -1;
+    bool isPlayer = false, isRanking = false, showMenu2 = false;
+    var node = MvcSiteMapProvider.SiteMaps.Current.CurrentNode;
+    var Servers = SenkaKichi.Models.SenkaRepository.Servers;
+    string FirstKey = node.Key;
+    
+    while (node != null) {
+        if (node.Key.StartsWith("Server")) {
+            string serverId = node.Key.Remove(0,6);
+            if (serverId == "") {
+                ServerId = 0;
+                Title = "全サーバ";
+            } else {
+                ServerId = int.Parse(serverId);
+                Title = Servers[ServerId].Name;
+            }
+            showMenu2 = true;
+        } else if (node.Key.StartsWith("Ranking")) {
+            isRanking = true;
+            Title2 = "ランキング";
+        } else if (node.Key.StartsWith("Player")) {
+            isPlayer = true;
+            Title2 = node.Title;
+            PlayerId = int.Parse(node.Key.Remove(0, 6));
+        }
+        node = node.ParentNode;
+    }
+}
+
+<ul class="nav navbar-nav pull-left">
+    <li class="dropdown dropdown-style pull-left">
+        <a href="#" class="dropdown-toggle text-center" data-toggle="dropdown" role="button" aria-expanded="false">@Title<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            @foreach (var server in Servers.Values) {
+                if (ServerId == server.ServerId) {
+                    <li class="active">@Html.ActionLink(server.Name, "Info", "Server", new { id = server.ServerId }, null)</li>
+                } else {
+                    <li>@Html.ActionLink(server.Name, "Info", "Server", new { id = server.ServerId }, null)</li>
+                }
+            }
+            <li class="divider"></li>
+            @if (ServerId == 0) {
+                <li class="active">@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
+            } else {
+                <li>@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
+            }
+        </ul>
+    </li>
+    
+    @if (showMenu2) {
+    <li class="dropdown dropdown-style pull-left">
+        <a href="#" class="dropdown-toggle text-center" data-toggle="dropdown" role="button" aria-expanded="false">@Title2<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+            @if (isPlayer) {
+                if (FirstKey.StartsWith("Player")) {
+                    <li class="active">@Html.ActionLink("情報", "Info", "Player", new { id = PlayerId }, null)</li>
+                    <li>@Html.ActionLink("アクティビティ", "Activity", "Player", new { id = PlayerId }, null)</li>
+                } else {
+                    <li>@Html.ActionLink("情報", "Info", "Player", new { id = PlayerId }, null)</li>
+                    <li class="active">@Html.ActionLink("アクティビティ", "Activity", "Player", new { id = PlayerId }, null)</li>
+                }
+                <li class="divider"></li>
+            }
+            @if (isRanking) {
+                <li class="active">@Html.ActionLink("ランキング", "Ranking", "Server", new { id = ServerId }, null)</li>
+            } else {
+                <li>@Html.ActionLink("ランキング", "Ranking", "Server", new { id = ServerId }, null)</li>
+            }
+            @if (!isPlayer && !isRanking) {
+                <li class="active">@Html.ActionLink("サーバ情報", "Info", "Server", new { id = ServerId }, null)</li>
+            } else {
+                <li>@Html.ActionLink("サーバ情報", "Ranking", "Info", new { id = ServerId }, null)</li>
+            }
+        </ul>
+    </li>
+    }
+</ul>
