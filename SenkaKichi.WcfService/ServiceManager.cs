@@ -1,6 +1,4 @@
 ﻿using log4net;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SenkaKichi.DbModels;
 using SenkaKichi.OAuthApi.Twitter;
 using SenkaKichi.WcfService.Models;
@@ -39,8 +37,6 @@ namespace SenkaKichi.WcfService
                 { "UpdateSenka" , new UpdateSenkaTask(new TimeSpan(12, 0, 0), 3, 0, 2) }
             };
 
-            Tasks["UpdateSenka"].NextRunTime = DateTime.Now;
-
             #endregion
 
             Database = new SenkaContext();
@@ -48,11 +44,7 @@ namespace SenkaKichi.WcfService
         }
 
         public void StartTimer() {
-            Servers = Database.Servers
-                .Include(server => server.ServerAuthorize)
-                .ToArray()
-                .ToDictionary(server => (int)server.ServerId, server => new ServerInfo(server));
-
+            RefreshServer();
             _timer = new Timer(TimerCallback, null, 3000, 1000);
         }
 
@@ -62,6 +54,17 @@ namespace SenkaKichi.WcfService
                 log.Debug(string.Format("[Task Trigger] {0}", task.Key));
                 task.Value.Run();
             }
+        }
+
+        public void RefreshServer() {
+            if (Database != null) {
+                Database.Dispose();
+            }
+            Database = new SenkaContext();
+            Servers = Database.Servers
+                .Include(server => server.ServerAuthorize)
+                .ToArray()
+                .ToDictionary(server => (int)server.ServerId, server => new ServerInfo(server));
         }
     }
 }

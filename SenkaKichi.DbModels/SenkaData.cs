@@ -26,6 +26,7 @@ namespace SenkaKichi.DbModels
         public byte Level { get; internal set; }
         public byte RankTypeId { get; internal set; }
         public short Medals { get; internal set; }
+        public Nullable<short> RankingAll { get; set; }
     
         public virtual DateInfo DateInfo { get; private set; }
         public virtual Player Player { get; private set; }

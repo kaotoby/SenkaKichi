@@ -17,7 +17,10 @@ namespace SenkaKichi.WcfService.Models
             Schedule = new SortedSet<DateTime>(schedule);
         }
 
-        public TaskInfo(TimeSpan interval, int startHour, int startMinute, int startSecond) {
+        public TaskInfo(TimeSpan interval, int startHour, int startMinute, int startSecond) :
+            this(interval, startHour, startMinute, startSecond, true) { }
+
+        public TaskInfo(TimeSpan interval, int startHour, int startMinute, int startSecond, bool runNow) {
             List<DateTime> schedule = new List<DateTime>();
             DateTime now = DateTime.Now;
             DateTime start = new DateTime(now.Year, now.Month, now.Day, startHour, startMinute, startSecond);
@@ -26,6 +29,8 @@ namespace SenkaKichi.WcfService.Models
                 start += interval;
             } while (now.Day == start.Day);
             Schedule = new SortedSet<DateTime>(schedule);
+            if (runNow) NextRunTime = DateTime.Now;
+            else NextRunTime = Schedule.FirstOrDefault(d => d > NextRunTime);
         }
 
         protected static ServiceManager Manager {

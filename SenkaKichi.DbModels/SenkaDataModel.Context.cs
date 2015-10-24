@@ -35,6 +35,5 @@ namespace SenkaKichi.DbModels
         public virtual DbSet<AspNetLoginProvider> AspNetLoginProviders { get; set; }
         public virtual DbSet<TwitterInfo> TwitterInfoes { get; set; }
         public virtual DbSet<ServerAuthorize> ServerAuthorizes { get; set; }
-        public virtual DbSet<ServerMaintenance> ServerMaintenances { get; set; }
     }
 }

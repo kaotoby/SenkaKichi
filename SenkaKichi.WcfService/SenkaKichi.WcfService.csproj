@@ -68,7 +68,6 @@
     <Compile Include="Models\ServerInfo.cs" />
     <Compile Include="Models\TaskInfo.cs" />
     <Compile Include="Models\UpdateSenkaTask.cs" />
-    <Compile Include="Operation\UpdateMaintenanceEndTime.cs" />
     <Compile Include="Operation\UpdateServerIpAddress.cs" />
     <Compile Include="Operation\ForceUpdateSenkaData.cs" />
     <Compile Include="Operation\VerifyUserToken.cs" />

@@ -2,20 +2,23 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SenkaKichi.DbModels;
-using SenkaKichi.WcfService.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace SenkaKichi.WcfService.Models
 {
     public class UpdateSenkaTask : TaskInfo
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(UpdateSenkaTask).FullName);
+
+        private const int MAX_RETRY_COUNT = 5;
 
         public UpdateSenkaTask(IEnumerable<DateTime> schedule) : base(schedule) { }
 
@@ -24,29 +27,26 @@ namespace SenkaKichi.WcfService.Models
 
         protected override void Main() {
             var now = DateTime.Now;
-            var maintenance = ServiceManager.Current.Database.ServerMaintenances
-                .OrderByDescending(m => m.Id)
-                .FirstOrDefault();
-
-            if (maintenance != null && now >= maintenance.StartTime && now <= maintenance.EndTime) {
-                log.Warn("[UpdateSenkaTask] Server Under Maintenance, " + maintenance.ToString());
-                NextRunTime = maintenance.EndTime;
-                return;
-            }
+            var servers = Manager.Servers.Values.Where(server => server.Enabled);
 
             log.Info("[UpdateSenkaTask] Start");
+
             UpdateDateInfo();
-            var servers = Manager.Servers.Values.Where(server => server.Enabled);
             Parallel.ForEach(servers, server => {
                 UpdateServerInfoHost(server);
             });
+            WriteRankingAllData();
+            PostRankingToTwitter();
+            PostDeltaRankingToTwitter();
+            PostExactDeltaRankingToTwitter();
+
             log.Info("[UpdateSenkaTask] End");
         }
 
         private void UpdateServerInfoHost(ServerInfo info) {
             bool success = false;
 
-            for (int i = 0; i < 5 && !success; i++) {
+            for (int i = 0; i < MAX_RETRY_COUNT && !success; i++) {
                 Thread.Sleep(5 * 60 * 1000 * i); //5*i min
                 if (i > 0 && info.Server.ServerAuthorize.Password != null) {
                     info.RefreshToken();
@@ -93,7 +93,7 @@ namespace SenkaKichi.WcfService.Models
                         throw new WebException(string.Format("[ServerId {0}] Page {1}, request failed!", data.Server.ServerId, i));
                     }
 
-                    i--; //Retry
+                    i--; //Retry 3s, 30s
                     Thread.Sleep(1000 * 3 * (int)Math.Pow(10, currentRetryCount++));
                 }
             }
@@ -116,6 +116,7 @@ namespace SenkaKichi.WcfService.Models
                 Manager.Database.DateInfoes.Add(Manager.DateInfo);
                 Manager.Database.SaveChanges();
             }
+            log.Info(string.Format("Current date: {0} ", Manager.DateInfo.DateId, Manager.DateInfo));
         }
 
         private static bool BatchParse(string jsonString, ServerInfo server, int page) {
@@ -137,6 +138,10 @@ namespace SenkaKichi.WcfService.Models
                     log.Warn(string.Format("[ServerId {0}] Requested failed (Error 201). Server will be re-login.", server.Server.ServerId));
                     server.RefreshToken();
                     return false;
+                } else if (apiResult == 100) {
+                    log.Warn(string.Format("[ServerId {0}] Requested failed (Error 100). Server under maintence.", server.Server.ServerId));
+                    Thread.Sleep(60 * 60 * 1000); //Wait 1 hour
+                    return false;
                 } else {
                     throw new WebException(jsonString);
                 }
@@ -145,6 +150,107 @@ namespace SenkaKichi.WcfService.Models
                 return false;
             }
             return true;
+        }
+
+        private void WriteRankingAllData() {
+            var manager = ServiceManager.Current;
+            manager.RefreshServer();
+            DateInfo date = manager.Servers[1].DateInfo;
+            if (manager.Servers.Values.Any(s => s.DateInfo != date)) {
+                throw new InvalidOperationException("Can't write ranking with in all servers. Some servers haven't complete the update.");
+            }
+
+            var ranking = manager.Database.SenkaDatas
+                    .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
+                    .OrderByDescending(data => data.RankPoint)
+                    .ThenByDescending(data => data.Experience)
+                    .Take(10000)
+                    .ToArray();
+
+            for (int i = 0; i < ranking.Length; i++) {
+                ranking[i].RankingAll = (short)(i + 1);
+            }
+            manager.Database.SaveChanges();
+            log.Debug("Finish writing the ranking within all servers.");
+        }
+
+        private void PostRankingToTwitter() {
+            var manager = ServiceManager.Current;
+            var top3RankPoint = manager.Database.SenkaDatas
+                .Include(data => data.Player)
+                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
+                .OrderByDescending(data => data.RankPoint)
+                .ThenByDescending(data => data.Experience)
+                .Take(3)
+                .ToArray();
+            if (top3RankPoint.Length == 0) {
+                throw new InvalidOperationException("Error when getting top 3 rank point.");
+            }
+
+            var date = manager.Servers[1].DateInfo;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0} 戦果ランキング\n", date);
+            for (int i = 0; i < 3; i++) {
+                var player = top3RankPoint[i].Player;
+                sb.AppendFormat("{0}位 {1} {2} {3}\n", i + 1,
+                    manager.Servers[player.ServerId].Server.NickName, player.Name, top3RankPoint[i].RankPoint);
+            }
+            sb.Length--;
+            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
+            log.Debug("Finish posting ranking to twitter");
+        }
+
+        private void PostDeltaRankingToTwitter() {
+            var manager = ServiceManager.Current;
+            var top3RankDelta = manager.Database.SenkaDatas
+                .Include(data => data.Player)
+                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
+                .Where(data => data.RankingDelta != null)
+                .OrderByDescending(data => data.RankingDelta)
+                .Take(3)
+                .ToArray();
+            if (top3RankDelta.Length == 0) {
+                log.Info("No ranking delta data to post.");
+                return;
+            }
+
+            var date = manager.Servers[1].DateInfo;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0} 戦果増分ランキング\n", date);
+            for (int i = 0; i < 3; i++) {
+                var player = top3RankDelta[i].Player;
+                sb.AppendFormat("{0}位 {1} {2} +{3}\n", i + 1,
+                    manager.Servers[player.ServerId].Server.NickName, player.Name, top3RankDelta[i].RankingDelta);
+            }
+            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
+            log.Debug("Finish posting ranking delta to twitter");
+        }
+
+        private void PostExactDeltaRankingToTwitter() {
+            var manager = ServiceManager.Current;
+            var top3RankDelta = manager.Database.SenkaDatas
+                .Include(data => data.Player)
+                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
+                .Where(data => data.ExperienceDelta != null)
+                .OrderByDescending(data => data.ExperienceDelta)
+                .Take(3)
+                .ToArray();
+            if (top3RankDelta.Length == 0) {
+                log.Info("No exact ranking delta data to post.");
+                return;
+            }
+
+            var date = manager.Servers[1].DateInfo;
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("{0} 経験値増分ランキング\n", date);
+            for (int i = 0; i < 3; i++) {
+                var player = top3RankDelta[i].Player;
+                sb.AppendFormat("{0}位 {1} {2} +{3}({4:0.00})\n", i + 1,
+                    manager.Servers[player.ServerId].Server.NickName, player.Name,
+                    top3RankDelta[i].ExperienceDelta, top3RankDelta[i].ExactRankPointDelta);
+            }
+            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
+            log.Debug("Finish posting exact ranking delta to twitter");
         }
     }
 }

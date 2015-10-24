@@ -13,7 +13,7 @@ namespace SenkaKichi.DbModels
 
         public bool Enabled {
             get {
-                return this.LastUpdated != null;
+                return this.ServerAuthorize.Password != null;
             }
         }
 

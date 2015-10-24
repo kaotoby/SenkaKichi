@@ -73,7 +73,6 @@
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Partial\TwitterInfo.cs" />
-    <Compile Include="Partial\ServerMaintenance.cs" />
     <Compile Include="Partial\AspNetLoginProvider.cs" />
     <Compile Include="Partial\AspNetUserLogin.cs" />
     <Compile Include="Partial\AspNetUser.cs" />
@@ -109,9 +108,6 @@
       <DependentUpon>SenkaDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="ServerAuthorize.cs">
-      <DependentUpon>SenkaDataModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ServerMaintenance.cs">
       <DependentUpon>SenkaDataModel.tt</DependentUpon>
     </Compile>
     <Compile Include="TwitterInfo.cs">

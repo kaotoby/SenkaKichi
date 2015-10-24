@@ -74,6 +74,7 @@
           <Property Name="Level" Type="tinyint" Nullable="false" />
           <Property Name="RankTypeId" Type="tinyint" Nullable="false" />
           <Property Name="Medals" Type="smallint" Nullable="false" />
+          <Property Name="RankingAll" Type="smallint" />
         </EntityType>
         <EntityType Name="ServerAuthorizes">
           <Key>
@@ -84,14 +85,6 @@
           <Property Name="Password" Type="varchar" MaxLength="255" />
           <Property Name="IpAddress" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Token" Type="varchar" MaxLength="50" />
-        </EntityType>
-        <EntityType Name="ServerMaintenances">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="StartTime" Type="smalldatetime" Nullable="false" />
-          <Property Name="EndTime" Type="smalldatetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Servers">
           <Key>
@@ -252,7 +245,6 @@
           <EntitySet Name="Players" EntityType="Self.Players" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SenkaDatas" EntityType="Self.SenkaDatas" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServerAuthorizes" EntityType="Self.ServerAuthorizes" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="ServerMaintenances" EntityType="Self.ServerMaintenances" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Servers" EntityType="Self.Servers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TwitterInfoes" EntityType="Self.TwitterInfoes" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_AspNetLoginProviderAspNetUserLogin" Association="Self.FK_AspNetLoginProviderAspNetUserLogin">
@@ -351,7 +343,6 @@
             <End Role="ServerAuthorize" EntitySet="ServerAuthorizes" />
             <End Role="Server" EntitySet="Servers" />
           </AssociationSet>
-          <EntitySet Name="ServerMaintenances" EntityType="SenkaDataModel.ServerMaintenance" />
           </EntityContainer>
         <EntityType Name="DateInfo">
           <Key>
@@ -381,6 +372,7 @@
           <Property Name="Medals" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
           <NavigationProperty Name="DateInfo" Relationship="SenkaDataModel.DateInfoSenkaData" FromRole="SenkaData" ToRole="DateInfo" cg:SetterAccess="Private" />
           <NavigationProperty Name="Player" cg:SetterAccess="Private" Relationship="SenkaDataModel.PlayerSenkaData" FromRole="SenkaData" ToRole="Player" />
+          <Property Name="RankingAll" Type="Int16" />
         </EntityType>
         <Association Name="DateInfoSenkaData">
           <End Type="SenkaDataModel.DateInfo" Role="DateInfo" Multiplicity="1" />
@@ -602,14 +594,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ServerMaintenance">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" cg:SetterAccess="Private" />
-          <Property Name="StartTime" Type="DateTime" Nullable="false" Precision="0" cg:SetterAccess="Internal" />
-          <Property Name="EndTime" Type="DateTime" Nullable="false" Precision="0" cg:SetterAccess="Internal" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -627,6 +611,7 @@
     <EntitySetMapping Name="SenkaDatas">
       <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.SenkaData)">
         <MappingFragment StoreEntitySet="SenkaDatas">
+                <ScalarProperty Name="RankingAll" ColumnName="RankingAll" />
                 <ScalarProperty Name="ExperienceDelta" ColumnName="ExperienceDelta" />
                 <ScalarProperty Name="RankingDelta" ColumnName="RankingDelta" />
                 <ScalarProperty Name="RankPointDelta" ColumnName="RankPointDelta" />
@@ -724,15 +709,6 @@
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Username" ColumnName="Username" />
                 <ScalarProperty Name="ServerId" ColumnName="ServerId" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ServerMaintenances">
-            <EntityTypeMapping TypeName="SenkaDataModel.ServerMaintenance">
-              <MappingFragment StoreEntitySet="ServerMaintenances">
-                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
-                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

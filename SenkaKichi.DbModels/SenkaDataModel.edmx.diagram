@@ -15,7 +15,6 @@
         <AssociationConnector Association="SenkaDataModel.FK_ServerPlayer" />
         <EntityTypeShape EntityType="SenkaDataModel.ServerAuthorize" Width="1.5" PointX="6.5" PointY="0.5" />
         <AssociationConnector Association="SenkaDataModel.FK_ServerAuthorizeServer" />
-        <EntityTypeShape EntityType="SenkaDataModel.ServerMaintenance" Width="1.5" PointX="6.5" PointY="3.375" />
         </Diagram>
       <Diagram DiagramId="0f5b419fb9024d7aaa7b07aedf4289bb" Name="UserDiagram" >
         <EntityTypeShape EntityType="SenkaDataModel.AspNetUser" Width="1.5" PointX="2.5" PointY="0.5" />

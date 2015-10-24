@@ -24,15 +24,6 @@ namespace SenkaKichi.WcfService
             }
         }
 
-        public ServiceResult UpdateMaintenanceEndTime() {
-            try {
-                return ServiceManager.Current.UpdateMaintenanceEndTime();
-            } catch (Exception ex) {
-                log.Error("Unknow error when ShortenMaintenanceTime.", ex);
-                return ServiceResult.UnknowError;
-            }
-        }
-
         public ServiceResult UpdateServerIpAddress() {
             try {
                 return ServiceManager.Current.UpdateServerIpAddress();
@@ -57,8 +48,6 @@ namespace SenkaKichi.WcfService
     {
         [OperationContract]
         ServiceResult VerifyUserToken(int userId);
-        [OperationContract]
-        ServiceResult UpdateMaintenanceEndTime();
         [OperationContract]
         ServiceResult UpdateServerIpAddress();
         [OperationContract]
