@@ -1,6 +1,9 @@
 ﻿@model SenkaKichi.ViewModels.Server.InfoViewModel
 @{
+    ViewBag.Title = Model.Server.Name;
+    ViewBag.Description = string.Format("艦これ「{0}」サーバの最新の戦果情報です。", Model.Server.Name);
     ViewBag.Keywords = string.Format(",{0}", Model.Server.Name);
+    ViewBag.ServerId = Model.Server.ServerId;
 }
 <header class="page-header row">
     <div class="col-lg-8 col-md-7">

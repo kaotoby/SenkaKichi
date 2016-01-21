@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNet.Identity
-@{
-    var node = MvcSiteMapProvider.SiteMaps.Current.CurrentNode;
+@{ 
+    if (!(ViewBag.OverrideTitle ?? false)) {
+        ViewBag.Title = string.Format("{0} - 戦果基地", ViewBag.Title);
+    }
 }
 <!DOCTYPE html>
 <html lang="ja">
@@ -8,17 +10,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="keywords" content="戦果基地,戦果速報,戦果,ランキング,艦これ,艦隊これくしょん@(ViewBag.Keywords)">
-    <title>@(ViewBag.Title ?? string.Format("{0} - 戦果基地", node.Title))</title>
-    <meta name="description" content="@(ViewBag.Description ?? node.Description)" />
-    <meta property="og:title" content="@node.Title" />
-    <meta property="og:description" content="@(ViewBag.Description ?? node.Description)" />
+    <title>@ViewBag.Title</title>
+    <meta name="description" content="@ViewBag.Description" />
+    <meta property="og:title" content="@ViewBag.Title" />
+    <meta property="og:description" content="@ViewBag.Description" />
     <meta property="og:type" content="@(ViewBag.OgType ?? "article")" />
-    <meta property="og:url" content="@node.Url" />
+    <meta property="og:url" content="@Request.Url.AbsoluteUri" />
     <meta property="og:site_name" content="戦果基地" />
     <meta property="fb:app_id" content="509470212541705" />
     <meta name="twitter:card" content="@(ViewBag.TwitterCardType ?? "summary")" />
     <meta name="twitter:site:id" content="3149631090" />
-    <link rel="canonical" href="@node.Url" />
+    <link rel="canonical" href="@Request.RawUrl" />
     @RenderSection("Head", required: false)
 
     <script>
@@ -28,7 +30,7 @@
                 (i[r].q = i[r].q || []).push(arguments)
             }, i[r].l = 1 * new Date(); a = s.createElement(o),
             m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
         ga('create', 'UA-60726591-1', 'auto');
         @if (User.Identity.IsAuthenticated) {

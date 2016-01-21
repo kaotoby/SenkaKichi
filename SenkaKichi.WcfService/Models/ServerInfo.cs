@@ -128,8 +128,11 @@ namespace SenkaKichi.WcfService.Models
 #if DEBUG
             if (Server.ServerId == 19) {
                 ApiToken = helper.GetToken();
-                Server.ServerAuthorize.Token = ApiToken;
-                ServiceManager.Current.Database.SaveChanges();
+                using (var db = new SenkaContext()) {
+                    var sa = db.ServerAuthorizes.Find(Server.ServerId);
+                    sa.Token = ApiToken;
+                    db.SaveChanges();
+                }
                 log.Warn(string.Format("[ServerId {0}] Token updated", Server.ServerId));
             } else {
                 Enabled = false;

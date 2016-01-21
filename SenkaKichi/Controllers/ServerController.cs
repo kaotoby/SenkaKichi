@@ -1,6 +1,5 @@
 ﻿using DevTrends.MvcDonutCaching;
 using Microsoft.AspNet.Identity.Owin;
-using MvcSiteMapProvider;
 using SenkaKichi.DbModels;
 using SenkaKichi.Models;
 using SenkaKichi.ViewModels.Server;
@@ -20,7 +19,7 @@ namespace SenkaKichi.Controllers
     {
         // GET: Server
         [OutputCache(Duration = 1200)]
-        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.InfoDynamicNodeProvider, SenkaKichi")]
+        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.InfoDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Info(int id, string date = "") {
             if (id == 0) {
                 return View("InfoAll");
@@ -70,7 +69,7 @@ namespace SenkaKichi.Controllers
         /// <param name="page">Page number</param>
         /// <param name="date">Date in yyMMddHH formate</param>
         [OutputCache(Duration = 1200)]
-        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.RankingDynamicNodeProvider, SenkaKichi")]
+        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.RankingDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Ranking(int id, int page = 0, string date = "") {
             DateTime dateTime;
 

@@ -107,12 +107,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
     </Reference>
-    <Reference Include="MvcSiteMapProvider">
-      <HintPath>..\packages\MvcSiteMapProvider.MVC5.Core.4.6.18\lib\net45\MvcSiteMapProvider.dll</HintPath>
-    </Reference>
-    <Reference Include="MvcSiteMapProvider.WebActivator">
-      <HintPath>..\packages\MvcSiteMapProvider.MVC5.4.6.18\lib\net45\MvcSiteMapProvider.WebActivator.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -204,9 +198,6 @@
     <Reference Include="System.Web.Optimization">
       <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
     </Reference>
-    <Reference Include="WebActivatorEx">
-      <HintPath>..\packages\WebActivatorEx.2.0.6\lib\net40\WebActivatorEx.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -242,8 +233,8 @@
     <Compile Include="Models\AjaxResult.cs" />
     <Compile Include="Models\ControllerBase.cs" />
     <Compile Include="Models\SenkaRepository.cs" />
-    <Compile Include="Models\SiteMap\PlayerDynamicNodeProvider.cs" />
-    <Compile Include="Models\SiteMap\ServerDynamicNodeProvider.cs" />
+    <None Include="Models\SiteMap\PlayerDynamicNodeProvider.cs" />
+    <None Include="Models\SiteMap\ServerDynamicNodeProvider.cs" />
     <Compile Include="Models\Identity\ApplicationUserTokenProvider.cs" />
     <Compile Include="Models\Identity\ApplicationUserValidator.cs" />
     <Compile Include="Models\Identity\ApplicationUserManager.cs" />
@@ -293,7 +284,6 @@
     <Content Include="Scripts\bootstrap.min.js">
       <DependentUpon>bootstrap.js</DependentUpon>
     </Content>
-    <Content Include="Mvc.sitemap" />
     <Content Include="Areas\Api\Views\web.config" />
     <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
@@ -388,10 +378,6 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="MvcSiteMapSchema.xsd">
-      <SubType>Designer</SubType>
-      <DependentUpon>Mvc.sitemap</DependentUpon>
-    </None>
     <None Include="Properties\PublishProfiles\senka-kichi - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\senka-kichi - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\SenkaKichi.pubxml" />
@@ -482,14 +468,6 @@
     <Content Include="Views\Manage\Index.cshtml" />
     <Content Include="Views\Manage\ManageLogins.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\SiteMapTitleHelperModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\SiteMapPathHelperModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\SiteMapNodeModelList.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\SiteMapNodeModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\SiteMapHelperModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\MetaRobotsHelperModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\MenuHelperModel.cshtml" />
-    <Content Include="Views\Shared\DisplayTemplates\CanonicalHelperModel.cshtml" />
     <Content Include="Views\Account\LogoutSucceed.cshtml" />
     <Content Include="Views\Error\500.cshtml" />
     <Content Include="Views\Error\404.cshtml" />

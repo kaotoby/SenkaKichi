@@ -1,4 +1,9 @@
 ﻿@model SenkaKichi.ViewModels.Server.RankingViewModel
+@{
+    ViewBag.Title = "全サーバのランキング";
+    ViewBag.Description = "艦これ全サーバの最新の戦果ランキングです。";
+    ViewBag.ServerId = 0;
+}
 
 <header class="page-header">
     <h1>全サーバのランキング <br class="visible-sm visible-xs" /><small><time datetime="@Model.Data[0].DateInfo.Date.ToString("s")">@Model.Data[0].DateInfo</time></small></h1>

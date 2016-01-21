@@ -12,6 +12,7 @@ namespace SenkaKichi
         public static void RegisterRoutes(RouteCollection routes) {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.LowercaseUrls = true;
+            routes.AppendTrailingSlash = true;
 
             routes.MapRoute(
                 name: "ServerRanking",

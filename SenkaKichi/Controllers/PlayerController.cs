@@ -1,6 +1,5 @@
 ﻿using DevTrends.MvcDonutCaching;
 using Microsoft.AspNet.Identity.Owin;
-using MvcSiteMapProvider;
 using SenkaKichi.DbModels;
 using SenkaKichi.Models;
 using SenkaKichi.ViewModels;
@@ -23,7 +22,7 @@ namespace SenkaKichi.Controllers
         /// <param name="id">Server Id</param>
         /// <param name="date">Date in yyMM formate</param>
         [OutputCache(Duration = 1200)]
-        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.InfoDynamicNodeProvider, SenkaKichi")]
+        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.InfoDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Info(int id, string date = "") {
             DateTime dateTime;
             SenkaData lastData = null;
@@ -68,7 +67,7 @@ namespace SenkaKichi.Controllers
         /// </summary>
         /// <param name="id">Server Id</param>
         [OutputCache(Duration = 1200)]
-        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.ActivityDynamicNodeProvider, SenkaKichi")]
+        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.ActivityDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Activity(int id) {
             SenkaData lastData = lastData = await repository.GetPlayerLastDataAsync(id);
             if (lastData == null) {

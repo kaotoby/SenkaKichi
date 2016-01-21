@@ -1,6 +1,5 @@
 ﻿using DevTrends.MvcDonutCaching;
 using Microsoft.AspNet.Identity.Owin;
-using MvcSiteMapProvider;
 using SenkaKichi.DbModels;
 using SenkaKichi.Models;
 using SenkaKichi.ViewModels;
