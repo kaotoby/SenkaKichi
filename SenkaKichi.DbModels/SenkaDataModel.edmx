@@ -75,6 +75,7 @@
           <Property Name="RankTypeId" Type="tinyint" Nullable="false" />
           <Property Name="Medals" Type="smallint" Nullable="false" />
           <Property Name="RankingAll" Type="smallint" />
+          <Property Name="RankingAllDelta" Type="smallint" />
         </EntityType>
         <EntityType Name="ServerAuthorizes">
           <Key>
@@ -364,15 +365,16 @@
           <Property Name="RankingDelta" Type="Int16" Nullable="true" cg:SetterAccess="Private" />
           <Property Name="RankPoint" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
           <Property Name="RankPointDelta" Type="Int16" Nullable="true" cg:SetterAccess="Private" />
-          <Property Name="Experience" Type="Int32" Nullable="true" cg:SetterAccess="Internal" />
-          <Property Name="ExperienceDelta" Type="Int32" cg:SetterAccess="Private" />
+          <Property Name="Experience" Type="Int32" Nullable="false" cg:SetterAccess="Internal" />
+          <Property Name="ExperienceDelta" Type="Int32" cg:SetterAccess="Private" Nullable="true" />
           <Property Name="Comment" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" cg:SetterAccess="Internal" />
           <Property Name="Level" Type="Byte" Nullable="false" cg:SetterAccess="Internal" />
           <Property Name="RankTypeId" Type="Byte" Nullable="false" cg:SetterAccess="Internal" />
           <Property Name="Medals" Type="Int16" Nullable="false" cg:SetterAccess="Internal" />
           <NavigationProperty Name="DateInfo" Relationship="SenkaDataModel.DateInfoSenkaData" FromRole="SenkaData" ToRole="DateInfo" cg:SetterAccess="Private" />
           <NavigationProperty Name="Player" cg:SetterAccess="Private" Relationship="SenkaDataModel.PlayerSenkaData" FromRole="SenkaData" ToRole="Player" />
-          <Property Name="RankingAll" Type="Int16" />
+          <Property Name="RankingAll" Type="Int16" Nullable="true" />
+          <Property Name="RankingAllDelta" Type="Int16" Nullable="true" />
         </EntityType>
         <Association Name="DateInfoSenkaData">
           <End Type="SenkaDataModel.DateInfo" Role="DateInfo" Multiplicity="1" />
@@ -611,6 +613,7 @@
     <EntitySetMapping Name="SenkaDatas">
       <EntityTypeMapping TypeName="IsTypeOf(SenkaDataModel.SenkaData)">
         <MappingFragment StoreEntitySet="SenkaDatas">
+                <ScalarProperty Name="RankingAllDelta" ColumnName="RankingAllDelta" />
                 <ScalarProperty Name="RankingAll" ColumnName="RankingAll" />
                 <ScalarProperty Name="ExperienceDelta" ColumnName="ExperienceDelta" />
                 <ScalarProperty Name="RankingDelta" ColumnName="RankingDelta" />

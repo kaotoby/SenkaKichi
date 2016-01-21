@@ -15,40 +15,9 @@ using System;
 namespace SenkaKichi.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : ControllerBase
     {
-        #region Declare
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
 
-        public AccountController() {
-        }
-
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager) {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager {
-            get {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set {
-                _signInManager = value;
-            }
-        }
-
-        public ApplicationUserManager UserManager {
-            get {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set {
-                _userManager = value;
-            }
-        }
-        #endregion
-
-        //
         // POST: /Account/ExternalLogin
         [AllowAnonymous, HttpPost, ValidateAntiForgeryToken]
         public ActionResult ExternalLogin(string provider, string returnUrl) {
@@ -56,8 +25,7 @@ namespace SenkaKichi.Controllers
             // Request a redirect to the external login provider
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
-
-        //
+        
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl) {
@@ -68,12 +36,12 @@ namespace SenkaKichi.Controllers
             }
 
             // Sign in the user with this external login provider if the user already has a login
-            var result = await SignInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
+            var result = await signInManager.ExternalSignInAsync(loginInfo, isPersistent: false);
             AspNetUser user;
             switch (result) {
                 case SignInStatus.Success:
-                    user = await UserManager.FindByLoginAsync(loginInfo.Login);
-                    await UserManager.UpdateTwitterProfileAsync(user.Id);
+                    user = await userManager.FindByLoginAsync(loginInfo.Login);
+                    await userManager.UpdateTwitterProfileAsync(user.Id);
 
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.Failure:
@@ -84,9 +52,9 @@ namespace SenkaKichi.Controllers
                 default:
                     // Create new user
                     user = new AspNetUser();
-                    var managerResult = await UserManager.CreateAsync(user, loginInfo);
+                    var managerResult = await userManager.CreateAsync(user, loginInfo);
                     if (managerResult.Succeeded) {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                        await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     } else {
                         throw new HttpException(managerResult.Errors.First());
                     }
@@ -129,22 +97,6 @@ namespace SenkaKichi.Controllers
             } else {
                 return View();
             }
-        }
-
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                if (_userManager != null) {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null) {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
-            }
-
-            base.Dispose(disposing);
         }
 
         #region Helpers

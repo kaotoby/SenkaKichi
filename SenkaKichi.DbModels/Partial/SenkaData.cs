@@ -16,7 +16,7 @@ namespace SenkaKichi.DbModels
                 if (deltaDiff < 10) {
                     return 0;
                 }
-                return (short)(Math.Round(deltaDiff / 25.0) * 25);
+                return (short)(Math.Round(deltaDiff / 5.0) * 5);
             }
         }
 
@@ -42,9 +42,15 @@ namespace SenkaKichi.DbModels
             } else {
                 this.RankingDelta = (short)(this.Ranking - previousData.Ranking);
                 this.RankPointDelta = (short)(this.RankPoint - previousData.RankPoint);
-                if (this.Experience.HasValue && previousData.Experience.HasValue) {
-                    this.ExperienceDelta = this.Experience.Value - previousData.Experience.Value;
-                }
+                this.ExperienceDelta = this.Experience - previousData.Experience;
+            }
+        }
+
+        internal void SetRankAllDelta(SenkaData previousData) {
+            if (this.PlayerId != previousData.PlayerId) throw new IdNotMatchException();
+
+            if (previousData.RankingAll.HasValue) {
+                this.RankingAllDelta = (short)(this.RankingAll.Value - previousData.RankingAll.Value);
             }
         }
 

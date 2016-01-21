@@ -10,6 +10,20 @@ namespace SenkaKichi.Models
 {
     public class ChartModels
     {
+        public static string ConvertToJson(object data) {
+            var serializer = new JsonSerializer();
+            serializer.ContractResolver = new SenkaContextContractResolver();
+#if DEBUG
+            serializer.Formatting = Formatting.Indented;
+#endif
+            var stringWriter = new StringWriter();
+            using (var writer = new JsonTextWriter(stringWriter)) {
+                writer.QuoteName = false;
+                serializer.Serialize(writer, data);
+            }
+            return stringWriter.ToString();
+        }
+
         public class Export
         {
             public string FileName { get; set; }
@@ -87,19 +101,38 @@ namespace SenkaKichi.Models
                     .ToArray();
                 if (RankPointDeltaExtra.All(data => data == null)) RankPointDeltaExtra = null;
             }
+        }
 
-            public string ToJsonString() {
-                var serializer = new JsonSerializer();
-                serializer.ContractResolver = new SenkaContextContractResolver();
-#if DEBUG
-                serializer.Formatting = Formatting.Indented;
-#endif
-                var stringWriter = new StringWriter();
-                using (var writer = new JsonTextWriter(stringWriter)) {
-                    writer.QuoteName = false;
-                    serializer.Serialize(writer, this);
-                }
-                return stringWriter.ToString();
+        public class Server
+        {
+            public KeyValuePair<short, short[]>[] RankPoint { get; set; }
+            public double[] RankPointDeltaAm { get; set; }
+            public double[] RankPointDeltaPm { get; set; }
+            public string[] TopName { get; set; }
+            public string StartTime { get; set; }
+            public string Date { get; set; }
+            public string ServerName { get; set; }
+
+            public Server(Dictionary<short, List<SenkaData>> serverData) {
+                RankPoint = serverData.ToDictionary(data => data.Key,
+                    data => data.Value.Select(d => d.RankPoint).ToArray())
+                    .ToArray();
+
+                RankPointDeltaAm = serverData.Select(
+                    data =>
+                    {
+                        var amData = data.Value.Where(d => d.DateInfo.Date.Hour == 3 && d.RankPointDelta != null);
+                        return amData.Count() == 0 ? 0 : Math.Round(amData.Average(d => d.RankPointDelta.Value), 1);
+                    }).ToArray();
+
+                RankPointDeltaPm = serverData.Select(
+                    data =>
+                    {
+                        var pmData = data.Value.Where(d => d.DateInfo.Date.Hour == 15 && d.RankPointDelta != null);
+                        return pmData.Count() == 0 ? 0 : Math.Round(pmData.Average(d => d.RankPointDelta.Value), 1);
+                    }).ToArray();
+
+                TopName = serverData[1].Select(data => data.Player.Name).ToArray();
             }
         }
     }

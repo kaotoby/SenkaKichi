@@ -3,6 +3,7 @@ using Microsoft.AspNet.Identity.Owin;
 using MvcSiteMapProvider;
 using SenkaKichi.DbModels;
 using SenkaKichi.Models;
+using SenkaKichi.ViewModels;
 using SenkaKichi.ViewModels.Player;
 using System;
 using System.Collections.Generic;
@@ -14,33 +15,34 @@ using System.Web.Mvc;
 
 namespace SenkaKichi.Controllers
 {
-    public class PlayerController : Controller
+    public class PlayerController : ControllerBase
     {
         /// <summary>
         ///     GET: Player/{id}
         /// </summary>
         /// <param name="id">Server Id</param>
-        /// <param name="d">Date in yyMM formate</param>
-        [DonutOutputCacheAttribute(Duration = 60)]
-        [MvcSiteMapNodeAttribute(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.InfoDynamicNodeProvider, SenkaKichi")]
-        public async Task<ActionResult> Info(int id, string d = "") {
-            DateTime date;
+        /// <param name="date">Date in yyMM formate</param>
+        [OutputCache(Duration = 1200)]
+        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.InfoDynamicNodeProvider, SenkaKichi")]
+        public async Task<ActionResult> Info(int id, string date = "") {
+            DateTime dateTime;
             SenkaData lastData = null;
-            if (d == "") {
-                lastData = await Repository.GetPlayerLastDataAsync(id);
-            } else if (DateTime.TryParseExact(d, "yyMM", null, DateTimeStyles.None, out date)) {
-                lastData = await Repository.GetPlayerLastDataAsync(id, new DateTime(date.Year, date.Month, 1, 3, 0, 0));
+            if (date == "") {
+                lastData = await repository.GetPlayerLastDataAsync(id);
+            } else if (DateTime.TryParseExact(date, "yyMM", null, DateTimeStyles.None, out dateTime)) {
+                lastData = await repository.GetPlayerLastDataAsync(id, new DateTime(dateTime.Year, dateTime.Month, 1, 3, 0, 0));
             }
             if (lastData == null) {
                 return HttpNotFound();
             }
 
-            date = new DateTime(lastData.DateInfo.Date.Year, lastData.DateInfo.Date.Month, 1, 3, 0, 0);
-            var startDate = await Repository.FindDateInfoByDateAsync(date);
-            var endDate = lastData.DateInfo;
+            dateTime = new DateTime(lastData.DateInfo.Date.Year, lastData.DateInfo.Date.Month, 1, 3, 0, 0);
+            var startDate = await repository.FindDateInfoByDateAsync(dateTime);
 
-            var playerData = new KeyValuePair<short, List<SenkaData>>(lastData.Ranking, await Repository.GetPlayerInfoAsync(id, startDate, endDate));
-            var boundData = await Repository.GetServerRankingBoundAsync(lastData.Player.ServerId, lastData.Ranking, startDate, endDate);
+            int endDateId = _repository.CalcuateEndDateId(startDate);
+            var playerInfoes = await repository.GetPlayerInfoAsync(id, startDate, endDateId);
+            var playerData = new KeyValuePair<short, List<SenkaData>>(lastData.Ranking, playerInfoes);
+            var boundData = await repository.GetServerRankingBoundAsync(lastData.Player.ServerId, lastData.Ranking, startDate);
             var chart = new ChartModels.Player(playerData, boundData);
             chart.StartTime = startDate.Date.ToString("s") + "Z";
             chart.Date = boundData.Last().Value.Last().DateInfo.ToString();
@@ -51,10 +53,10 @@ namespace SenkaKichi.Controllers
             }
 
             var model = new InfoViewModel {
-                Activity = await Repository.GetPlayerActivityAsync(id, endDate, 3),
+                Activity = await repository.GetPlayerActivityAsync(id, lastData.DateInfo, 3),
                 LastData = lastData,
                 RankPointExtra = playerData.Value.Sum(data => data.RankPointDeltaExtra ?? 0),
-                JsonChart = chart.ToJsonString()
+                JsonChart = ChartModels.ConvertToJson(chart)
             };
 
             return View(model);
@@ -65,14 +67,14 @@ namespace SenkaKichi.Controllers
         ///     GET: Player/{id}/Activity
         /// </summary>
         /// <param name="id">Server Id</param>
-        [DonutOutputCacheAttribute(Duration = 60)]
-        [MvcSiteMapNodeAttribute(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.ActivityDynamicNodeProvider, SenkaKichi")]
+        [OutputCache(Duration = 1200)]
+        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Player.ActivityDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Activity(int id) {
-            SenkaData lastData = lastData = await Repository.GetPlayerLastDataAsync(id);
+            SenkaData lastData = lastData = await repository.GetPlayerLastDataAsync(id);
             if (lastData == null) {
                 return HttpNotFound();
             }
-            var activity = await Repository.GetPlayerActivityAsync(id, lastData.DateInfo, 20);
+            var activity = await repository.GetPlayerActivityAsync(id, lastData.DateInfo, 20);
             var model = new ActivityViewModel {
                 LastData = lastData,
                 Activity = activity
@@ -84,11 +86,12 @@ namespace SenkaKichi.Controllers
         ///     GET: Player/Search
         /// </summary>
         /// <param name="q">Search query</param>
-        /// <param name="p">Page</param>
-        [DonutOutputCacheAttribute(Duration = 120)]
-        public async Task<ActionResult> Search(string q, int server = 0, int p = 1) {
-            var date = await Repository.GetAllServerLastUpdatedAsync();
-            var result = await Repository.SearchPlayerAsync(q, server, date, p);
+        /// <param name="server">Server Id</param>
+        /// <param name="page">Page</param>
+        [OutputCache(Duration = 1200)]
+        public async Task<ActionResult> Search(string q, int server = 0, int page = 1) {
+            var date = await repository.GetAllServerLastUpdatedAsync();
+            var result = await repository.SearchPlayerAsync(q, server, date, page);
             return View(result);
         }
 
@@ -96,36 +99,15 @@ namespace SenkaKichi.Controllers
         ///     GET: Player/Suggest
         /// </summary>
         /// <param name="q">Search query</param>
-        /// <param name="p">Page</param>
-        [DonutOutputCacheAttribute(Duration = 120, Location = System.Web.UI.OutputCacheLocation.Any)]
+        /// <param name="server">Server Id</param>
+        [OutputCache(Duration = 7200)]
         public async Task<ActionResult> Suggest(string q, int server = 0) {
             if (string.IsNullOrWhiteSpace(q)) {
                 return new AjaxResult<object>(false);
             }
-            var date = await Repository.GetAllServerLastUpdatedAsync();
-            var result = await Repository.SearchSuggestPlayerAsync(q, server, date);
+            var date = await repository.GetAllServerLastUpdatedAsync();
+            var result = await repository.SearchSuggestPlayerAsync(q, server, date);
             return new AjaxResult<PlayerSuggestResult[]>(true, result);
         }
-
-        #region Declare
-        private SenkaRepository _repository;
-
-        public SenkaRepository Repository {
-            get {
-                return _repository ?? HttpContext.GetOwinContext().Get<SenkaRepository>();
-            }
-            private set {
-                _repository = value;
-            }
-        }
-
-        public PlayerController() {
-        }
-
-        public PlayerController(SenkaRepository repository) {
-            Repository = repository;
-        }
-
-        #endregion
     }
 }

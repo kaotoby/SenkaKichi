@@ -1,0 +1,7 @@
+﻿@model SenkaData
+@if (Model.RankingAll.HasValue) {
+    <span class="cl-gray">@(Model.RankingAll.Value)位</span>
+    { Html.RenderPartial("_RankingDeltaPartial", Model.RankingAllDelta, new ViewDataDictionary()); }
+} else {
+    <span class="cl-gray">---</span>
+}

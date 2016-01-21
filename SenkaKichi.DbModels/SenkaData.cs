@@ -20,13 +20,14 @@ namespace SenkaKichi.DbModels
         public Nullable<short> RankingDelta { get; private set; }
         public short RankPoint { get; internal set; }
         public Nullable<short> RankPointDelta { get; private set; }
-        public Nullable<int> Experience { get; internal set; }
+        public int Experience { get; internal set; }
         public Nullable<int> ExperienceDelta { get; private set; }
         public string Comment { get; internal set; }
         public byte Level { get; internal set; }
         public byte RankTypeId { get; internal set; }
         public short Medals { get; internal set; }
         public Nullable<short> RankingAll { get; set; }
+        public Nullable<short> RankingAllDelta { get; set; }
     
         public virtual DateInfo DateInfo { get; private set; }
         public virtual Player Player { get; private set; }

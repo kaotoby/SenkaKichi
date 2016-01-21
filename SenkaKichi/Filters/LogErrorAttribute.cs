@@ -26,7 +26,7 @@ namespace SenkaKichi.Filters
             }
 
             // if the request is AJAX return JSON else view.
-            if (filterContext.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest") {
+            if (filterContext.HttpContext.Request.RequestContext.RouteData.Values["area"].ToString() == "Api") {
                 filterContext.Result = new AjaxResult<string>(false, filterContext.Exception.Message);
             } else {
                 filterContext.Result = new RedirectResult("/error/500");

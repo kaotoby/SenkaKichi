@@ -17,6 +17,7 @@ namespace SenkaKichi
             bundles.Add(new ScriptBundle("~/bundles/highcharts").Include(
                         "~/Scripts/highcharts.js",
                         "~/Scripts/highcharts.exporting.js",
+                        "~/Scripts/highcharts.exporting.offline.js",
                         "~/Scripts/highcharts.lang.ja.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -38,8 +39,8 @@ namespace SenkaKichi
             bundles.Add(new ScriptBundle("~/bundles/models/player").Include(
                       "~/Scripts/ViewModels/Player/*.js"));
 
-            //bundles.Add(new ScriptBundle("~/bundles/models/server").Include(
-            //          "~/Scripts/ViewModels/Server/*.js"));
+            bundles.Add(new ScriptBundle("~/bundles/models/server").Include(
+                      "~/Scripts/ViewModels/Server/*.js"));
 
             bundles.Add(new StyleBundle("~/styles/bootstrap").Include(
                       "~/Content/Bootstrap.css"));

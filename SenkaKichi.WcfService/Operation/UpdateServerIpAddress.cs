@@ -11,7 +11,7 @@ namespace SenkaKichi.WcfService
                 Servers[item.Key].Server.ServerAuthorize.IpAddress = item.Value;
                 Servers[item.Key].IP = item.Value;
             }
-            Database.SaveChanges();
+            //Database.SaveChanges();
             return ServiceResult.Success;
         }
     }

@@ -14,7 +14,6 @@ namespace SenkaKichi.WcfService
     {
         public Dictionary<int, ServerInfo> Servers { get; private set; }
         public Dictionary<string, TaskInfo> Tasks { get; private set; }
-        public SenkaContext Database { get; private set; }
         public TwitterApiManager TwitterManager { get; private set; }
         public DateInfo DateInfo { get; set; }
         public static ServiceManager Current {
@@ -38,13 +37,17 @@ namespace SenkaKichi.WcfService
             };
 
             #endregion
-
-            Database = new SenkaContext();
-            TwitterManager = new TwitterApiManager(Database);
+            
+            TwitterManager = new TwitterApiManager(new SenkaContext());
         }
 
         public void StartTimer() {
-            RefreshServer();
+            using (var db = new SenkaContext()) {
+                Servers = db.Servers
+                    .Include(server => server.ServerAuthorize)
+                    .ToArray()
+                    .ToDictionary(server => (int)server.ServerId, server => new ServerInfo(server));
+            }
             _timer = new Timer(TimerCallback, null, 3000, 1000);
         }
 
@@ -54,17 +57,6 @@ namespace SenkaKichi.WcfService
                 log.Debug(string.Format("[Task Trigger] {0}", task.Key));
                 task.Value.Run();
             }
-        }
-
-        public void RefreshServer() {
-            if (Database != null) {
-                Database.Dispose();
-            }
-            Database = new SenkaContext();
-            Servers = Database.Servers
-                .Include(server => server.ServerAuthorize)
-                .ToArray()
-                .ToDictionary(server => (int)server.ServerId, server => new ServerInfo(server));
         }
     }
 }

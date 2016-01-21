@@ -71,7 +71,7 @@
             @if (!isPlayer && !isRanking) {
                 <li class="active">@Html.ActionLink("サーバ情報", "Info", "Server", new { id = ServerId }, null)</li>
             } else {
-                <li>@Html.ActionLink("サーバ情報", "Ranking", "Info", new { id = ServerId }, null)</li>
+                <li>@Html.ActionLink("サーバ情報", "Info", "Server", new { id = ServerId }, null)</li>
             }
         </ul>
     </li>

@@ -6,6 +6,9 @@
 <section class="table table-bordered table-condensed table-hover">
     <header class="tr thead">
         <span class="td">順位</span>
+        @if (Model.Data.First().RankingAll.HasValue) {
+            <span class="td">全鯖順位</span>
+        }
         <span class="td hidden-sm hidden-xs">Lv.</span>
         <span class="td">提督名</span>
         <span class="td hidden-sm hidden-xs">階級</span>
@@ -14,14 +17,18 @@
         <span class="td">勲章</span>
     </header>
     @foreach (var data in Model.Data) {
-        <a id="rank@(data.Ranking)" href="/player/@data.PlayerId" class="tr">
-            <span class="td">@(data.Ranking)位 @Html.Partial("_RankingDeltaPartial", data.RankingDelta, new ViewDataDictionary())</span>
+        <a id="rank@(data.Ranking)" href="@Url.Action("Info", "Player", new { id = data.PlayerId })" class="tr">
+            <span class="td">@(data.Ranking)位 @{ Html.RenderPartial("_RankingDeltaPartial", data.RankingDelta, new ViewDataDictionary()); }</span>
+            @if (Model.Data.First().RankingAll.HasValue) {
+                <span class="td">@{ Html.RenderPartial("_RankingAllPartial", data); }</span>
+            }
             <span class="td hidden-sm hidden-xs">@data.Level</span>
             <span class="td">@data.Player.Name</span>
             <span class="td hidden-sm hidden-xs">@data.RankType</span>
             <span class="td">@data.Comment</span>
-            <span class="td">@data.RankPoint @Html.Partial("_RankPointDeltaPartial", data)</span>
+            <span class="td">@data.RankPoint @{ Html.RenderPartial("_RankPointDeltaPartial", data); }</span>
             <span class="td">@Html.Partial("_RankingMedalPartial", data.Medals)</span>
         </a>
     }
 </section>
+@{ Html.RenderPartial("~/Views/Shared/_PagerPartial.cshtml", Model.Pager); }

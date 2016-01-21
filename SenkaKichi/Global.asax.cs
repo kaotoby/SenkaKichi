@@ -38,9 +38,6 @@ namespace SenkaKichi
             if (varys.Contains("IsMobile") && context.Request.Browser.IsMobileDevice) {
                 str += "IsMobile";
             }
-            if (varys.Contains("Ajax") && context.Request.Headers["X-Requested-With"] == "XMLHttpRequest") {
-                str += "Ajax";
-            }
             return str;
         }
     }
@@ -48,9 +45,8 @@ namespace SenkaKichi
     public class Startup
     {
         public void Configuration(IAppBuilder app) {
-            app.CreatePerOwinContext(SenkaContext.Create);
+            app.CreatePerOwinContext<SenkaContext>(SenkaContext.Create);
             app.CreatePerOwinContext<TwitterApiManager>(TwitterApiManager.Create);
-            app.CreatePerOwinContext<SenkaRepository>(SenkaRepository.Create);
             IdentityConfig.ConfigureAuth(app);
         }
     }

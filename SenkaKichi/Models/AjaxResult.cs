@@ -44,37 +44,8 @@ namespace SenkaKichi.Models
         }
     }
 
-    public class PlayerSearchResult
-    {
-        [JsonIgnore]
-        public DateInfo DateInfo { get; set; }
-        public Player Player { get; set; }
-        public short Ranking { get; set; }
-        public string Comment { get; set; }
-        public string Date {
-            get {
-                return this.DateInfo.ToString();
-            }
-        }
-        public string Server {
-            get {
-                return SenkaRepository.Servers[this.Player.ServerId].NickName;
-            }
-        }
-    }
-
-    public class PlayerSuggestResult
-    {
-        public string Name { get; set; }
-        public string Server { get; set; }
-        public string Comment { get; set; }
-        public string Id { get; set; }
-    }
-
     public class SenkaContextContractResolver : DefaultContractResolver
     {
-        private static Regex _req = new Regex(@"((?<=.)[A-Z][a-zA-Z]*)|((?<=[a-zA-Z])\d+)");
-
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization) {
             return base.CreateProperties(type, memberSerialization)
                 .Where(property =>

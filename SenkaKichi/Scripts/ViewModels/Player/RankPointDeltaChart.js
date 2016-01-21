@@ -71,7 +71,6 @@
                 stacking: 'normal',
                 dataLabels: {
                     enabled: true,
-                    padding: 3,
                     color: 'white',
                     style: {
                         textShadow: '0 0 3px black'

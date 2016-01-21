@@ -19,15 +19,17 @@ namespace SenkaKichi.OAuthApi.Twitter
     {
 #if DEBUG
         // 戦果基地Debug https://apps.twitter.com/app/8177786
-        public const string ConsumerKey = "SSrmgTBR577Q5xRyccp6o4Unv";
-        public const string ConsumerSecret = "WGi1ePvHDVG9zjZa8Y2zQLk6B5Dcqj8HFU5Ns5FemBpnOqgstL";
+        //public const string ConsumerKey = "SSrmgTBR577Q5xRyccp6o4Unv";
+        //public const string ConsumerSecret = "WGi1ePvHDVG9zjZa8Y2zQLk6B5Dcqj8HFU5Ns5FemBpnOqgstL";
+        public const string ConsumerKey = "uDx3MGVi7wOCBTvVGapFCeQ59";
+        public const string ConsumerSecret = "zcUYtS5gXsxNmbSdfVrAXkMAVgAk3cX7U8pXeuMWSMhczl9nP1";
 #else
         // 戦果基地 https://apps.twitter.com/app/8177780
         public const string ConsumerKey = "uDx3MGVi7wOCBTvVGapFCeQ59";
         public const string ConsumerSecret = "zcUYtS5gXsxNmbSdfVrAXkMAVgAk3cX7U8pXeuMWSMhczl9nP1";
 #endif
         public const int MaxContentLength = 140;
-        public static int ShortUrlLength { get; private set; }
+        public static int ShortUrlLength = 23;
 
         private SenkaContext _db;
         private readonly HttpClient _httpClient;
@@ -43,7 +45,7 @@ namespace SenkaKichi.OAuthApi.Twitter
 #if DEBUG
                 ShortUrlLength = 23;
 #else
-                Task.Run(async () => await UpdateShortUrlLength()).Wait();
+                ///Task.Run(async () => await UpdateShortUrlLength()).Wait();
 #endif
             }
         }
@@ -89,7 +91,7 @@ namespace SenkaKichi.OAuthApi.Twitter
             Regex httpReg = new Regex(@"http://\S+");
             Regex httpsReg = new Regex(@"https://\S+");
             string replaced = content;
-            replaced = httpReg.Replace(replaced, new string('a', ShortUrlLength - 1));
+            replaced = httpReg.Replace(replaced, new string('a', ShortUrlLength));
             replaced = httpsReg.Replace(replaced, new string('a', ShortUrlLength));
             if (replaced.Length > MaxContentLength) {
                 throw new ArgumentException(string.Format("Content length over {0}", MaxContentLength), "content");
@@ -159,7 +161,7 @@ namespace SenkaKichi.OAuthApi.Twitter
             string nonce = Guid.NewGuid().ToString("N");
             string timestamp = DateTime.UtcNow.ToUnixTimestamp();
 
-            var authorizationParts = new SortedDictionary<string, string>
+            var authorizationParts = new SortedDictionary<string, string>()
             {
                 { "oauth_consumer_key", ConsumerKey },
                 { "oauth_nonce", nonce },
@@ -169,24 +171,21 @@ namespace SenkaKichi.OAuthApi.Twitter
                 { "oauth_version", "1.0" }
             };
 
+            var signatureParameter = new SortedDictionary<string, string>();
+
+            foreach (var item in authorizationParts) {
+                signatureParameter.Add(item.Key, item.Value);
+            }
+            foreach (var item in paras) {
+                signatureParameter.Add(item.Key, item.Value.ToString());
+            }
             // Bulid Signature base OAuth parameter
             var parameterBuilder = new StringBuilder();
-            foreach (var authorizationKey in authorizationParts) {
+            foreach (var authorizationKey in signatureParameter) {
                 parameterBuilder.AppendFormat("{0}={1}&", Uri.EscapeDataString(authorizationKey.Key), Uri.EscapeDataString(authorizationKey.Value));
             }
             parameterBuilder.Length--;
             string parameterString = parameterBuilder.ToString();
-
-            // Bulid Url parameter
-            var urlParameterBuilder = new StringBuilder();
-            if (paras != null && paras.Count > 0) {
-                foreach (var para in paras) {
-                    urlParameterBuilder.AppendFormat(
-                        "{0}={1}&", para.Key, Uri.EscapeDataString(para.Value.ToString()));
-                }
-                urlParameterBuilder.Length -= 1;
-            }
-            string urlParameter = urlParameterBuilder.ToString();
 
             // Bulid signature base string
             var canonicalizedRequestBuilder = new StringBuilder();
@@ -195,10 +194,6 @@ namespace SenkaKichi.OAuthApi.Twitter
             canonicalizedRequestBuilder.Append(Uri.EscapeDataString(endPoint));
             canonicalizedRequestBuilder.Append("&");
             canonicalizedRequestBuilder.Append(Uri.EscapeDataString(parameterString));
-            if (urlParameter != "") {
-                canonicalizedRequestBuilder.Append(Uri.EscapeDataString("&" + urlParameter));
-                urlParameter = "?" + urlParameter;
-            }
 
             // Append signature
             string signature = ComputeSignature(ConsumerSecret, accessTokenSecret, canonicalizedRequestBuilder.ToString());
@@ -213,7 +208,19 @@ namespace SenkaKichi.OAuthApi.Twitter
             }
             authorizationHeaderBuilder.Length -= 2;
 
-
+            // Bulid Url parameter
+            var urlParameterBuilder = new StringBuilder();
+            if (paras != null && paras.Count > 0) {
+                foreach (var para in paras) {
+                    urlParameterBuilder.AppendFormat(
+                        "{0}={1}&", para.Key, Uri.EscapeDataString(para.Value.ToString()));
+                }
+                urlParameterBuilder.Length -= 1;
+            }
+            string urlParameter = urlParameterBuilder.ToString();
+            if (urlParameter != "") {
+                urlParameter = "?" + urlParameter;
+            }
 
             // Make request
             var request = new HttpRequestMessage(method, endPoint + urlParameter);

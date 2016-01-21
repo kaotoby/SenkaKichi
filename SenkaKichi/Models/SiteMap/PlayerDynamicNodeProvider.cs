@@ -34,7 +34,7 @@ namespace SenkaKichi.SiteMap.Player
         public override IEnumerable<DynamicNode> GetDynamicNodeCollection(ISiteMapNode node) {
             using (var db = new SenkaContext()) {
                 var players = db.Players.Include(p => p.Server);
-                foreach (var player in db.Players) {
+                foreach (var player in players) {
                     DynamicNode dynamicNode = new DynamicNode("Activity" + player.PlayerId.ToString(), player.Name);
                     dynamicNode.Description = string.Format("{0}({1})のアクティビティ。", player.Name, player.Server.Name);
                     dynamicNode.ParentKey = "Player" + player.PlayerId.ToString();
@@ -42,7 +42,6 @@ namespace SenkaKichi.SiteMap.Player
                     dynamicNode.UpdatePriority = UpdatePriority.Absolute_040; //Below Normal
                     dynamicNode.RouteValues.Add("id", player.PlayerId);
                     dynamicNode.Protocol = "https";
-                    dynamicNode.VisibilityProvider = "MvcSiteMapProvider.FilteredSiteMapNodeVisibilityProvider, MvcSiteMapProvider";
 
                     yield return dynamicNode;
                 }

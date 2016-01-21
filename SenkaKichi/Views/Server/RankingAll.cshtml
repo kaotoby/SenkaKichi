@@ -1,7 +1,28 @@
-﻿
-@{
-    ViewBag.Title = "DashBoard";
-}
+﻿@model SenkaKichi.ViewModels.Server.RankingViewModel
 
-<h2>DashBoard</h2>
-
+<header class="page-header">
+    <h1>全サーバのランキング <br class="visible-sm visible-xs" /><small><time datetime="@Model.Data[0].DateInfo.Date.ToString("s")">@Model.Data[0].DateInfo</time></small></h1>
+</header>
+<section class="table table-bordered table-condensed table-hover">
+    <header class="tr thead">
+        <span class="td">順位</span>
+        <span class="td">鯖順位</span>
+        <span class="td">鯖</span>
+        <span class="td">提督名</span>
+        <span class="td">コメント</span>
+        <span class="td">戦果</span>
+        <span class="td">勲章</span>
+    </header>
+    @foreach (var data in Model.Data) {
+        <a id="rank@(data.Ranking)" href="@Url.Action("Info", "Player", new { id = data.PlayerId })" class="tr">
+            <span class="td">@{ Html.RenderPartial("_RankingAllPartial", data); }</span>
+            <span class="td">@(data.Ranking)位 @{ Html.RenderPartial("_RankingDeltaPartial", data.RankingDelta, new ViewDataDictionary()); }</span>
+            <span class="td">@data.Player.Server.NickName</span>
+            <span class="td">@data.Player.Name</span>
+            <span class="td">@data.Comment</span>
+            <span class="td">@data.RankPoint @{ Html.RenderPartial("_RankPointDeltaPartial", data); }</span>
+            <span class="td">@Html.Partial("_RankingMedalPartial", data.Medals)</span>
+        </a>
+    }
+</section>
+@{ Html.RenderPartial("~/Views/Shared/_PagerPartial.cshtml", Model.Pager); }

@@ -1,30 +1,26 @@
 ﻿$(function () {
     var series = [
         {
-            index: 3,
+            index: 2,
             name: SenkaChart.PlayerName,
             data: SenkaChart.RankPoint.Value,
             color: '#958242'
         },
         {
-            index: 2,
+            index: 1,
             name: SenkaChart.RankPointLower.Key + '位',
             data: SenkaChart.RankPointLower.Value,
             color: '#101010',
-            marker: {
-                symbol: 'diamond'
-            }
+            marker: { symbol: 'diamond' }
         }
     ];
     if (SenkaChart.RankPointUpper.Key != 0) {
         series.push({
-            index: 1,
+            index: 0,
             name: SenkaChart.RankPointUpper.Key + '位',
             data: SenkaChart.RankPointUpper.Value,
             color: '#909090',
-            marker: {
-                symbol: 'diamond'
-            }
+            marker: { symbol: 'diamond' }
         });
     }
 
@@ -72,15 +68,11 @@
             shared: true,
             crosshairs: true,
             formatter: function (tooltip) {
-                var items = this.points || splat(this),
-                    series = items[0].series,
-                    s;
-
+                var items = this.points;
                 // sort the values
                 items.sort(function (a, b) {
-                    return ((a.y < b.y) ? -1 : ((a.y > b.y) ? 1 : 0));
+                    return ((a.y < b.y) ? 1 : ((a.y > b.y) ? -1 : 0));
                 });
-                items.reverse();
 
                 return tooltip.defaultFormatter.call(this, tooltip);
             }

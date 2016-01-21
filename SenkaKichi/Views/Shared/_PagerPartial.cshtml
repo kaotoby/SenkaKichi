@@ -1,0 +1,23 @@
+﻿@model SenkaKichi.ViewModels.PagerViewModels
+
+<nav class="text-center">
+    <ul class="pagination pagination-sm text-center">
+        @if (Model.Page > 1) {
+            <li><a href="?page=@(Model.Page - 1)" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        } else {
+            <li class="disabled"><span aria-label="Previous"><span aria-hidden="true">&laquo;</span></span></li>
+        }
+        @for (int p = 1; p <= Model.TotalPage; p++) {
+            if (Model.Page == p) {
+                <li class="active"><a>@p <span class="sr-only">(current)</span></a></li>
+            } else {
+                <li><a href="?page=@(p)">@p</a></li>
+            }
+        }
+        @if (Model.Page < Model.TotalPage) {
+            <li><a href="?page=@(Model.Page + 1)" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+        } else {
+            <li class="disabled"><span aria-label="Next"><span aria-hidden="true">&raquo;</span></span></li>
+        }
+    </ul>
+</nav>

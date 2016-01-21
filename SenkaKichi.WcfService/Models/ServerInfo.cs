@@ -95,7 +95,7 @@ namespace SenkaKichi.WcfService.Models
             DataSet = new List<ApiSenkaResult>();
             IP = Server.ServerAuthorize.IpAddress;
             ApiToken = server.ServerAuthorize.Token;
-            if (Enabled && ApiToken == null) {
+            if (Enabled && string.IsNullOrEmpty(ApiToken)) {
                 RefreshToken();
             }
             IsUpdating = false;
@@ -138,8 +138,11 @@ namespace SenkaKichi.WcfService.Models
 #else
             try {
                 ApiToken = helper.GetToken();
-                Server.ServerAuthorize.Token = ApiToken;
-                ServiceManager.Current.Database.SaveChanges();
+                using (var db = new SenkaContext()) {
+                    var sa = db.ServerAuthorizes.Find(Server.ServerId);
+                    sa.Token = ApiToken;
+                    db.SaveChanges();
+                }
                 Enabled = true;
                 log.Warn(string.Format("[ServerId {0}] Token updated", Server.ServerId));
             } catch (Exception ex) {
@@ -162,11 +165,11 @@ namespace SenkaKichi.WcfService.Models
                 log.Info(string.Format("[ServerId {0}] {1} datas were deleted and have been re-requested.", Server.ServerId, count));
             }
 
-            var lastData = (from data in database.SenkaDatas
-                            where data.DateId == DateInfo.DateId - 1
-                            && data.Player.ServerId == Server.ServerId
-                            select data)
-                           .ToDictionary(d => d.PlayerId, d => d);
+            var lastData = database.SenkaDatas
+                .Where(data =>
+                    data.DateId == DateInfo.DateId - 1 &&
+                    data.Player.ServerId == Server.ServerId)
+                .ToDictionary(d => d.PlayerId, d => d);
 
             foreach (var item in DataSet) {
                 SenkaData data = new SenkaData {

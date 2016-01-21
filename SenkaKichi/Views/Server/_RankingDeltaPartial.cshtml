@@ -1,11 +1,11 @@
 ﻿@model short?
 @if (Model.HasValue) {
-    int value = Model.Value;
+    short value = Model.Value;
     if (value == 0) {
         <span class="cl-gray">(&uarr;0)</span>
     } else if (value < 0) {
-        <span class="cl-green">(&uarr;@Math.Abs(value))</span>
+        <span class="cl-red">(&uarr;@Math.Abs(value))</span>
     } else {
-        <span class="cl-red">(&darr;@value)</span>
+        <span class="cl-green">(&darr;@value)</span>
     }
 }

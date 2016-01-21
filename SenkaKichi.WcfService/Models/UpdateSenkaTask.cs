@@ -25,6 +25,9 @@ namespace SenkaKichi.WcfService.Models
         public UpdateSenkaTask(TimeSpan interval, int startHour, int startMinute, int startSecond)
             : base(interval, startHour, startMinute, startSecond) { }
 
+        public UpdateSenkaTask(TimeSpan interval, int startHour, int startMinute, int startSecond, bool runNow)
+            : base(interval, startHour, startMinute, startSecond, runNow) { }
+
         protected override void Main() {
             var now = DateTime.Now;
             var servers = Manager.Servers.Values.Where(server => server.Enabled);
@@ -35,10 +38,18 @@ namespace SenkaKichi.WcfService.Models
             Parallel.ForEach(servers, server => {
                 UpdateServerInfoHost(server);
             });
-            WriteRankingAllData();
-            PostRankingToTwitter();
-            PostDeltaRankingToTwitter();
-            PostExactDeltaRankingToTwitter();
+            try {
+                WriteRankingAllData();
+            } catch (Exception ex) {
+                log.Fatal("Fail to write the ranking within all servers.", ex);
+            }
+            try {
+                PostRankingToTwitter();
+                PostDeltaRankingToTwitter();
+                PostExactDeltaRankingToTwitter();
+            } catch (Exception ex) {
+                log.Error("Post to Twitter Failed!", ex);
+            }
 
             log.Info("[UpdateSenkaTask] End");
         }
@@ -109,12 +120,13 @@ namespace SenkaKichi.WcfService.Models
             } else {
                 date = new DateTime(current.Year, current.Month, current.Day, 3, 0, 0);
             }
-
-            Manager.DateInfo = Manager.Database.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);
-            if (Manager.DateInfo == null) {
-                Manager.DateInfo = new DateInfo { Date = date };
-                Manager.Database.DateInfoes.Add(Manager.DateInfo);
-                Manager.Database.SaveChanges();
+            using (var db = new SenkaContext()) {
+                Manager.DateInfo = db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);
+                if (Manager.DateInfo == null) {
+                    Manager.DateInfo = new DateInfo { Date = date };
+                    db.DateInfoes.Add(Manager.DateInfo);
+                    db.SaveChanges();
+                }
             }
             log.Info(string.Format("Current date: {0} ", Manager.DateInfo.DateId, Manager.DateInfo));
         }
@@ -153,104 +165,112 @@ namespace SenkaKichi.WcfService.Models
         }
 
         private void WriteRankingAllData() {
-            var manager = ServiceManager.Current;
-            manager.RefreshServer();
-            DateInfo date = manager.Servers[1].DateInfo;
-            if (manager.Servers.Values.Any(s => s.DateInfo != date)) {
-                throw new InvalidOperationException("Can't write ranking with in all servers. Some servers haven't complete the update.");
-            }
+            using (var db = new SenkaContext()) {
+                if (db.Servers.Any(s => s.LastUpdated != Manager.DateInfo.DateId)) {
+                    throw new InvalidOperationException("Can't write ranking with in all servers. Some servers haven't complete the update.");
+                }
 
-            var ranking = manager.Database.SenkaDatas
-                    .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
-                    .OrderByDescending(data => data.RankPoint)
-                    .ThenByDescending(data => data.Experience)
-                    .Take(10000)
-                    .ToArray();
+                var lastData = db.SenkaDatas
+                        .Where(data =>
+                            data.DateId == Manager.DateInfo.DateId - 1 &&
+                            data.RankingAll != null)
+                        .ToDictionary(data => data.PlayerId, data => data);
 
-            for (int i = 0; i < ranking.Length; i++) {
-                ranking[i].RankingAll = (short)(i + 1);
+                var ranking = db.SenkaDatas
+                        .Where(data => data.DateId == Manager.DateInfo.DateId)
+                        .OrderByDescending(data => data.RankPoint)
+                        .ThenByDescending(data => data.Experience)
+                        .Take(10000)
+                        .ToArray();
+
+                for (int i = 0; i < ranking.Length; i++) {
+                    var data = ranking[i];
+                    data.RankingAll = (short)(i + 1);
+                    if (lastData.ContainsKey(data.PlayerId)) {
+                        data.SetRankAllDelta(lastData[data.PlayerId]);
+                    }
+                }
+                db.SaveChanges();
+                log.Debug("Finish writing the ranking within all servers.");
             }
-            manager.Database.SaveChanges();
-            log.Debug("Finish writing the ranking within all servers.");
         }
 
         private void PostRankingToTwitter() {
-            var manager = ServiceManager.Current;
-            var top3RankPoint = manager.Database.SenkaDatas
-                .Include(data => data.Player)
-                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
-                .OrderByDescending(data => data.RankPoint)
-                .ThenByDescending(data => data.Experience)
-                .Take(3)
-                .ToArray();
-            if (top3RankPoint.Length == 0) {
-                throw new InvalidOperationException("Error when getting top 3 rank point.");
+            using (var db = new SenkaContext()) {
+                var top3RankPoint = db.SenkaDatas
+                    .Include(data => data.Player)
+                    .Where(data => data.DateId == Manager.DateInfo.DateId)
+                    .OrderByDescending(data => data.RankPoint)
+                    .ThenByDescending(data => data.Experience)
+                    .Take(3)
+                    .ToArray();
+                if (top3RankPoint.Length == 0) {
+                    throw new InvalidOperationException("Error when getting top 3 rank point.");
+                }
+                
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("{0} 戦果ランキング\n", Manager.DateInfo);
+                for (int i = 0; i < 3; i++) {
+                    var player = top3RankPoint[i].Player;
+                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankPoint[i].RankPoint,
+                         player.Name, Manager.Servers[player.ServerId].Server.NickName);
+                }
+                sb.Length--;
+                Manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).Wait();
+                log.Debug("Finish posting ranking to twitter");
             }
-
-            var date = manager.Servers[1].DateInfo;
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0} 戦果ランキング\n", date);
-            for (int i = 0; i < 3; i++) {
-                var player = top3RankPoint[i].Player;
-                sb.AppendFormat("{0}位 {1} {2} {3}\n", i + 1,
-                    manager.Servers[player.ServerId].Server.NickName, player.Name, top3RankPoint[i].RankPoint);
-            }
-            sb.Length--;
-            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
-            log.Debug("Finish posting ranking to twitter");
         }
 
         private void PostDeltaRankingToTwitter() {
-            var manager = ServiceManager.Current;
-            var top3RankDelta = manager.Database.SenkaDatas
-                .Include(data => data.Player)
-                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
-                .Where(data => data.RankingDelta != null)
-                .OrderByDescending(data => data.RankingDelta)
-                .Take(3)
-                .ToArray();
-            if (top3RankDelta.Length == 0) {
-                log.Info("No ranking delta data to post.");
-                return;
+            using (var db = new SenkaContext()) {
+                var top3RankDelta = db.SenkaDatas
+                    .Include(data => data.Player)
+                    .Where(data => data.DateId == Manager.DateInfo.DateId)
+                    .Where(data => data.RankingDelta != null)
+                    .OrderByDescending(data => data.RankingDelta)
+                    .Take(3)
+                    .ToArray();
+                if (top3RankDelta.Length == 0) {
+                    log.Info("No ranking delta data to post.");
+                    return;
+                }
+                
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("{0} 戦果増分ランキング\n", Manager.DateInfo);
+                for (int i = 0; i < 3; i++) {
+                    var player = top3RankDelta[i].Player;
+                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankDelta[i].RankPointDelta,
+                         player.Name, Manager.Servers[player.ServerId].Server.NickName);
+                }
+                Manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).Wait();
+                log.Debug("Finish posting ranking delta to twitter");
             }
-
-            var date = manager.Servers[1].DateInfo;
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0} 戦果増分ランキング\n", date);
-            for (int i = 0; i < 3; i++) {
-                var player = top3RankDelta[i].Player;
-                sb.AppendFormat("{0}位 {1} {2} +{3}\n", i + 1,
-                    manager.Servers[player.ServerId].Server.NickName, player.Name, top3RankDelta[i].RankingDelta);
-            }
-            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
-            log.Debug("Finish posting ranking delta to twitter");
         }
 
         private void PostExactDeltaRankingToTwitter() {
-            var manager = ServiceManager.Current;
-            var top3RankDelta = manager.Database.SenkaDatas
-                .Include(data => data.Player)
-                .Where(data => data.DateId == manager.Servers[1].DateInfo.DateId)
-                .Where(data => data.ExperienceDelta != null)
-                .OrderByDescending(data => data.ExperienceDelta)
-                .Take(3)
-                .ToArray();
-            if (top3RankDelta.Length == 0) {
-                log.Info("No exact ranking delta data to post.");
-                return;
+            using (var db = new SenkaContext()) {
+                var top3RankDelta = db.SenkaDatas
+                    .Include(data => data.Player)
+                    .Where(data => data.DateId == Manager.DateInfo.DateId)
+                    .Where(data => data.ExperienceDelta != null)
+                    .OrderByDescending(data => data.ExperienceDelta)
+                    .Take(3)
+                    .ToArray();
+                if (top3RankDelta.Length == 0) {
+                    log.Info("No exact ranking delta data to post.");
+                    return;
+                }
+                
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("{0} 経験値増分ランキング\n", Manager.DateInfo);
+                for (int i = 0; i < 3; i++) {
+                    var player = top3RankDelta[i].Player;
+                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankDelta[i].ExactRankPointDelta,
+                         player.Name, Manager.Servers[player.ServerId].Server.NickName);
+                }
+                Manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).Wait();
+                log.Debug("Finish posting exact ranking delta to twitter");
             }
-
-            var date = manager.Servers[1].DateInfo;
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("{0} 経験値増分ランキング\n", date);
-            for (int i = 0; i < 3; i++) {
-                var player = top3RankDelta[i].Player;
-                sb.AppendFormat("{0}位 {1} {2} +{3}({4:0.00})\n", i + 1,
-                    manager.Servers[player.ServerId].Server.NickName, player.Name,
-                    top3RankDelta[i].ExperienceDelta, top3RankDelta[i].ExactRankPointDelta);
-            }
-            manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).RunSynchronously();
-            log.Debug("Finish posting exact ranking delta to twitter");
         }
     }
 }

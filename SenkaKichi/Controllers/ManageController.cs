@@ -12,7 +12,7 @@ using SenkaKichi.ViewModels.Manage;
 namespace SenkaKichi.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : ControllerBase
     {
 
         //
@@ -20,7 +20,7 @@ namespace SenkaKichi.Controllers
         public async Task<ActionResult> Index() {
             ViewBag.StatusMessage = TempData["StatusMessage"];
 
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            var user = await userManager.FindByIdAsync(User.Identity.GetUserId<int>());
             return View(user);
         }
 
@@ -30,7 +30,7 @@ namespace SenkaKichi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UpdatePlayer(int playerId) {
             if (ModelState.IsValid) {
-                var result = await UserManager.SetPlayerAsync(User.Identity.GetUserId<int>(), playerId);
+                var result = await userManager.SetPlayerAsync(User.Identity.GetUserId<int>(), playerId);
                 AddErrors(result);
             }
 
@@ -42,10 +42,10 @@ namespace SenkaKichi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GetVerifyToken() {
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            var user = await userManager.FindByIdAsync(User.Identity.GetUserId<int>());
             string token = user.PlayerVerifyToken;
             if (token == null && user.PlayerId != null) {
-                token = await UserManager.GeneratePlayerVerifyTokenAsync(user);
+                token = await userManager.GeneratePlayerVerifyTokenAsync(user);
             }
             if (token != null) {
                 return new AjaxResult<string>(true, token);
@@ -59,7 +59,7 @@ namespace SenkaKichi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> VerifyPlayer() {
-            var verifyResult = await UserManager.VerifyPlayerAsync(User.Identity.GetUserId<int>());
+            var verifyResult = await userManager.VerifyPlayerAsync(User.Identity.GetUserId<int>());
             if (verifyResult.Succeeded) {
                 return new AjaxResult<string>(true);
             } else {
@@ -72,11 +72,11 @@ namespace SenkaKichi.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> RemoveLogin(string loginProvider, string providerKey) {
-            var result = await UserManager.RemoveLoginAsync(User.Identity.GetUserId<int>(), new UserLoginInfo(loginProvider, providerKey));
+            var result = await userManager.RemoveLoginAsync(User.Identity.GetUserId<int>(), new UserLoginInfo(loginProvider, providerKey));
             if (result.Succeeded) {
-                var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+                var user = await userManager.FindByIdAsync(User.Identity.GetUserId<int>());
                 if (user != null) {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    await signInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
             } else {
             }
@@ -87,11 +87,11 @@ namespace SenkaKichi.Controllers
         // GET: /Manage/ManageLogins
         public async Task<ActionResult> ManageLogins() {
             ViewBag.StatusMessage = TempData["StatusMessage"];
-            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId<int>());
+            var user = await userManager.FindByIdAsync(User.Identity.GetUserId<int>());
             if (user == null) {
                 return View("Error");
             }
-            var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId<int>());
+            var userLogins = await userManager.GetLoginsAsync(User.Identity.GetUserId<int>());
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = true;
             return View(new ManageLoginsViewModel {
@@ -116,7 +116,7 @@ namespace SenkaKichi.Controllers
             if (loginInfo == null) {
                 return RedirectToAction("ManageLogins");
             }
-            var result = await UserManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo);
+            var result = await userManager.AddLoginAsync(User.Identity.GetUserId<int>(), loginInfo);
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins");
         }
 
@@ -126,53 +126,6 @@ namespace SenkaKichi.Controllers
 
             return PartialView();
         }
-
-        #region Declare
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-
-        public ManageController() {
-        }
-
-        public ManageController(ApplicationUserManager userManager, ApplicationSignInManager signInManager) {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
-
-        public ApplicationSignInManager SignInManager {
-            get {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set {
-                _signInManager = value;
-            }
-        }
-
-        public ApplicationUserManager UserManager {
-            get {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set {
-                _userManager = value;
-            }
-        }
-
-        protected override void Dispose(bool disposing) {
-            if (disposing) {
-                if (_userManager != null) {
-                    _userManager.Dispose();
-                    _userManager = null;
-                }
-
-                if (_signInManager != null) {
-                    _signInManager.Dispose();
-                    _signInManager = null;
-                }
-            }
-
-            base.Dispose(disposing);
-        }
-        #endregion
 
         #region Helpers
         // Used for XSRF protection when adding external logins

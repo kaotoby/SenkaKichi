@@ -1,0 +1,26 @@
+[
+  {
+    "outputFileName": "Scripts/highcharts.js",
+    "inputFiles": [
+      "Scripts/highcharts.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/highcharts.exporting.offline.src.js",
+    "inputFiles": [
+      "Scripts/highcharts.exporting.offline.src.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/highcharts.exporting.js",
+    "inputFiles": [
+      "Scripts/highcharts.exporting.js"
+    ]
+  },
+  {
+    "outputFileName": "Scripts/highcharts.exporting.offline.js",
+    "inputFiles": [
+      "Scripts/highcharts.exporting.offline.js"
+    ]
+  }
+]

@@ -1,6 +1,5 @@
 ﻿@model SenkaKichi.ViewModels.Player.InfoViewModel
 @{
-    ViewBag.Title = string.Format("{0} ({1})", Model.LastData.Player.Name, Model.LastData.Player.Server.Name);
     ViewBag.Keywords = string.Format(",{0},{1}", Model.LastData.Player.Name, Model.LastData.Player.Server.Name);
     ViewBag.OgType = "profile";
 }

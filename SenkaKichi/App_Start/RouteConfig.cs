@@ -16,7 +16,8 @@ namespace SenkaKichi
             routes.MapRoute(
                 name: "ServerRanking",
                 url: "Server/Ranking",
-                defaults: new { controller = "Server", action = "Ranking", id = 0 }
+                defaults: new { controller = "Server", action = "Ranking", id = 0 },
+                namespaces: new[] { "SenkaKichi.Controllers" }
             );
 
             routes.MapRoute(
@@ -36,7 +37,8 @@ namespace SenkaKichi
                 name: "Primary",
                 url: "{controller}/{id}/{action}",
                 defaults: new { action = "Info", id = 0 },
-                constraints: new { controller = "(Server|Player)" }
+                constraints: new { controller = "(Server|Player)" },
+                namespaces: new[] { "SenkaKichi.Controllers" }
             );
 
             routes.MapRoute(

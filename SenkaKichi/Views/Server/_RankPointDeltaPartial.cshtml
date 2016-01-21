@@ -1,4 +1,4 @@
-﻿@model SenkaKichi.DbModels.SenkaData
+﻿@model SenkaData
 @if (Model.RankPointDelta.HasValue) {
     int value = Model.RankPointDelta.Value;
     if (Model.RankPointDeltaExtra.HasValue) {
@@ -14,7 +14,6 @@
         <span class="cl-blue font-bold">(+@value)</span>
     }
 }
-@if (Model.RankPointDeltaExtra.HasValue) {
-    int value = Model.RankPointDeltaExtra.Value;
-    <span class="cl-red font-bold">(+@value)</span>
+@if (Model.RankPointDeltaExtra > 0) {
+    <span class="cl-red"><small>(+@Model.RankPointDeltaExtra.Value)</small></span>
 }

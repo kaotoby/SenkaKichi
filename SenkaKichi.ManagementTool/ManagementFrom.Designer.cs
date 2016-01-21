@@ -28,13 +28,14 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.textBoxLog = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.buttonAddMaintenance = new System.Windows.Forms.Button();
-            this.buttonUpdateStart = new System.Windows.Forms.Button();
-            this.buttonUpdateEnd = new System.Windows.Forms.Button();
             this.buttonUpdateIp = new System.Windows.Forms.Button();
             this.buttonForceUpdateData = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.buttonTest = new System.Windows.Forms.Button();
+            this.buttonImportData = new System.Windows.Forms.Button();
+            this.buttonCalcRanking = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.buttonPostTwitter = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -68,54 +69,21 @@
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.buttonAddMaintenance);
-            this.flowLayoutPanel1.Controls.Add(this.buttonUpdateStart);
-            this.flowLayoutPanel1.Controls.Add(this.buttonUpdateEnd);
             this.flowLayoutPanel1.Controls.Add(this.buttonUpdateIp);
             this.flowLayoutPanel1.Controls.Add(this.buttonForceUpdateData);
             this.flowLayoutPanel1.Controls.Add(this.buttonTest);
+            this.flowLayoutPanel1.Controls.Add(this.buttonImportData);
+            this.flowLayoutPanel1.Controls.Add(this.buttonCalcRanking);
+            this.flowLayoutPanel1.Controls.Add(this.buttonPostTwitter);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(478, 156);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
-            // buttonAddMaintenance
-            // 
-            this.buttonAddMaintenance.Location = new System.Drawing.Point(5, 5);
-            this.buttonAddMaintenance.Margin = new System.Windows.Forms.Padding(5);
-            this.buttonAddMaintenance.Name = "buttonAddMaintenance";
-            this.buttonAddMaintenance.Size = new System.Drawing.Size(149, 30);
-            this.buttonAddMaintenance.TabIndex = 1;
-            this.buttonAddMaintenance.Text = "Add Maintenance";
-            this.buttonAddMaintenance.UseVisualStyleBackColor = true;
-            this.buttonAddMaintenance.Click += new System.EventHandler(this.buttonAddMaintenance_Click);
-            // 
-            // buttonUpdateStart
-            // 
-            this.buttonUpdateStart.Location = new System.Drawing.Point(164, 5);
-            this.buttonUpdateStart.Margin = new System.Windows.Forms.Padding(5);
-            this.buttonUpdateStart.Name = "buttonUpdateStart";
-            this.buttonUpdateStart.Size = new System.Drawing.Size(149, 30);
-            this.buttonUpdateStart.TabIndex = 1;
-            this.buttonUpdateStart.Text = "Update Maintenance Start";
-            this.buttonUpdateStart.UseVisualStyleBackColor = true;
-            this.buttonUpdateStart.Click += new System.EventHandler(this.buttonUpdateStart_Click);
-            // 
-            // buttonUpdateEnd
-            // 
-            this.buttonUpdateEnd.Location = new System.Drawing.Point(323, 5);
-            this.buttonUpdateEnd.Margin = new System.Windows.Forms.Padding(5);
-            this.buttonUpdateEnd.Name = "buttonUpdateEnd";
-            this.buttonUpdateEnd.Size = new System.Drawing.Size(149, 30);
-            this.buttonUpdateEnd.TabIndex = 1;
-            this.buttonUpdateEnd.Text = "Update Maintenance End";
-            this.buttonUpdateEnd.UseVisualStyleBackColor = true;
-            this.buttonUpdateEnd.Click += new System.EventHandler(this.buttonUpdateEnd_Click);
-            // 
             // buttonUpdateIp
             // 
-            this.buttonUpdateIp.Location = new System.Drawing.Point(5, 45);
+            this.buttonUpdateIp.Location = new System.Drawing.Point(5, 5);
             this.buttonUpdateIp.Margin = new System.Windows.Forms.Padding(5);
             this.buttonUpdateIp.Name = "buttonUpdateIp";
             this.buttonUpdateIp.Size = new System.Drawing.Size(149, 30);
@@ -126,7 +94,7 @@
             // 
             // buttonForceUpdateData
             // 
-            this.buttonForceUpdateData.Location = new System.Drawing.Point(164, 45);
+            this.buttonForceUpdateData.Location = new System.Drawing.Point(164, 5);
             this.buttonForceUpdateData.Margin = new System.Windows.Forms.Padding(5);
             this.buttonForceUpdateData.Name = "buttonForceUpdateData";
             this.buttonForceUpdateData.Size = new System.Drawing.Size(149, 30);
@@ -135,14 +103,9 @@
             this.buttonForceUpdateData.UseVisualStyleBackColor = true;
             this.buttonForceUpdateData.Click += new System.EventHandler(this.buttonForceUpdateData_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "SQLiteDatabase|*.db";
-            // 
             // buttonTest
             // 
-            this.buttonTest.Location = new System.Drawing.Point(323, 45);
+            this.buttonTest.Location = new System.Drawing.Point(323, 5);
             this.buttonTest.Margin = new System.Windows.Forms.Padding(5);
             this.buttonTest.Name = "buttonTest";
             this.buttonTest.Size = new System.Drawing.Size(149, 30);
@@ -150,6 +113,44 @@
             this.buttonTest.Text = "Test";
             this.buttonTest.UseVisualStyleBackColor = true;
             this.buttonTest.Click += new System.EventHandler(this.buttonTest_Click);
+            // 
+            // buttonImportData
+            // 
+            this.buttonImportData.Location = new System.Drawing.Point(5, 45);
+            this.buttonImportData.Margin = new System.Windows.Forms.Padding(5);
+            this.buttonImportData.Name = "buttonImportData";
+            this.buttonImportData.Size = new System.Drawing.Size(149, 30);
+            this.buttonImportData.TabIndex = 3;
+            this.buttonImportData.Text = "Import Data";
+            this.buttonImportData.UseVisualStyleBackColor = true;
+            this.buttonImportData.Click += new System.EventHandler(this.buttonImportData_Click);
+            // 
+            // buttonCalcRanking
+            // 
+            this.buttonCalcRanking.Location = new System.Drawing.Point(164, 45);
+            this.buttonCalcRanking.Margin = new System.Windows.Forms.Padding(5);
+            this.buttonCalcRanking.Name = "buttonCalcRanking";
+            this.buttonCalcRanking.Size = new System.Drawing.Size(149, 30);
+            this.buttonCalcRanking.TabIndex = 4;
+            this.buttonCalcRanking.Text = "Calc Ranking";
+            this.buttonCalcRanking.UseVisualStyleBackColor = true;
+            this.buttonCalcRanking.Click += new System.EventHandler(this.buttonCalcRanking_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "SQLiteDatabase|*.db";
+            // 
+            // buttonPostTwitter
+            // 
+            this.buttonPostTwitter.Location = new System.Drawing.Point(323, 45);
+            this.buttonPostTwitter.Margin = new System.Windows.Forms.Padding(5);
+            this.buttonPostTwitter.Name = "buttonPostTwitter";
+            this.buttonPostTwitter.Size = new System.Drawing.Size(149, 30);
+            this.buttonPostTwitter.TabIndex = 5;
+            this.buttonPostTwitter.Text = "Post Twitter";
+            this.buttonPostTwitter.UseVisualStyleBackColor = true;
+            this.buttonPostTwitter.Click += new System.EventHandler(this.buttonPostTwitter_Click);
             // 
             // ManagementFrom
             // 
@@ -175,10 +176,11 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button buttonForceUpdateData;
         private System.Windows.Forms.Button buttonUpdateIp;
-        private System.Windows.Forms.Button buttonUpdateStart;
-        private System.Windows.Forms.Button buttonUpdateEnd;
-        private System.Windows.Forms.Button buttonAddMaintenance;
         private System.Windows.Forms.Button buttonTest;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button buttonImportData;
+        private System.Windows.Forms.Button buttonCalcRanking;
+        private System.Windows.Forms.Button buttonPostTwitter;
     }
 }
 

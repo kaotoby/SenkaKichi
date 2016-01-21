@@ -11,33 +11,15 @@ using System.Web.Mvc;
 
 namespace SenkaKichi.Controllers
 {
-    public class SharedController : Controller
+    public class SharedController : ControllerBase
     {
-        private ApplicationUserManager _userManager;
-
-        public SharedController() {
-        }
-
-        public SharedController(ApplicationUserManager userManager) {
-            UserManager = userManager;
-        }
-
-        public ApplicationUserManager UserManager {
-            get {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set {
-                _userManager = value;
-            }
-        }
-
         [ChildActionOnly]
         public ActionResult _LoginPartial() {
             AspNetUser user = null;
 
             if (Request.IsAuthenticated && Session["User"] == null) {
                 try {
-                    user = Task.Run(() => UserManager.FindByIdAsync(User.Identity.GetUserId<int>())).Result;
+                    user = Task.Run(() => userManager.FindByIdAsync(User.Identity.GetUserId<int>())).Result;
                     if (user == null) {
                         HttpContext.GetOwinContext().Authentication.SignOut();
                     } else {
