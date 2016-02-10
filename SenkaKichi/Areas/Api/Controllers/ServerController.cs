@@ -23,7 +23,7 @@ namespace SenkaKichi.Areas.Api.Controllers
         /// <param name="id">Server Id</param>
         /// <param name="page">Page number</param>
         /// <param name="date">Date in yyMMddHH formate</param>
-        [OutputCache(Duration = 300)]
+        [DonutOutputCache(Duration = 300)]
         public async Task<ActionResult> Ranking(int id, int page = 0, string date = "") {
             if (id == 0) {
                 return View("RankingAll");

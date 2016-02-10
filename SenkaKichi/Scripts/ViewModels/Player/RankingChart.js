@@ -12,6 +12,13 @@
         credits: {
             text: SenkaChart.Date + ' - 戦果基地',
         },
+        exporting: {
+            chartOptions: {
+                credits: {
+                    enabled: true
+                }
+            }
+        },
         xAxis: {
             title: {
                 text: '　'

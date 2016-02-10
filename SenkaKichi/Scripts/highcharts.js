@@ -1726,7 +1726,6 @@
                 }
             }
         },
-
         loading: {
             // hideDuration: 100,
             labelStyle: {
@@ -1784,7 +1783,7 @@
         },
 
         credits: {
-            enabled: true,
+            enabled: false,
             text: '戦果基地',
             position: {
                 align: 'right',

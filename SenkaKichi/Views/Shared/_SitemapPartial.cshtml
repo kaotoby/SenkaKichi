@@ -18,18 +18,18 @@
     <li class="dropdown dropdown-style pull-left">
         <a href="#" class="dropdown-toggle text-center" data-toggle="dropdown" role="button" aria-expanded="false">@Title1<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
+            @if (ViewBag.ServerId == 0) {
+                <li class="active">@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
+            } else {
+                <li>@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
+            }
+            <li class="divider"></li>
             @foreach (var server in Servers.Values) {
                 if (ViewBag.ServerId == server.ServerId) {
                     <li class="active">@Html.ActionLink(server.Name, "Info", "Server", new { id = server.ServerId }, null)</li>
                 } else {
                     <li>@Html.ActionLink(server.Name, "Info", "Server", new { id = server.ServerId }, null)</li>
                 }
-            }
-            <li class="divider"></li>
-            @if (ViewBag.ServerId == 0) {
-                <li class="active">@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
-            } else {
-                <li>@Html.ActionLink("全サーバ", "Info", "Server", new { id = 0 }, null)</li>
             }
         </ul>
     </li>

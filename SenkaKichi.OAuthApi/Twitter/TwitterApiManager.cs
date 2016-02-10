@@ -30,17 +30,15 @@ namespace SenkaKichi.OAuthApi.Twitter
 #endif
         public const int MaxContentLength = 140;
         public static int ShortUrlLength = 23;
-
-        private SenkaContext _db;
+        
         private readonly HttpClient _httpClient;
 
         public string ApiEndPoint {
             get { return "https://api.twitter.com/1.1/"; }
         }
 
-        public TwitterApiManager(SenkaContext database) {
+        public TwitterApiManager() {
             _httpClient = new HttpClient();
-            _db = database;
             if (ShortUrlLength == default(int)) {
 #if DEBUG
                 ShortUrlLength = 23;
@@ -51,7 +49,7 @@ namespace SenkaKichi.OAuthApi.Twitter
         }
 
         public static TwitterApiManager Create(IdentityFactoryOptions<TwitterApiManager> options, IOwinContext context) {
-            return new TwitterApiManager(context.Get<SenkaContext>());
+            return new TwitterApiManager();
         }
 
         private async Task UpdateShortUrlLength() {
@@ -104,10 +102,12 @@ namespace SenkaKichi.OAuthApi.Twitter
         }
 
         private Task<AspNetUserLogin> FindUserLoginAsync(int userId) {
-            return _db.AspNetUserLogins
-                .FirstOrDefaultAsync(userlogin =>
-                    userlogin.UserId == userId &&
-                    userlogin.LoginProviderId == 1);
+            using (var db = new SenkaContext()) {
+                return db.AspNetUserLogins
+                    .FirstOrDefaultAsync(userlogin =>
+                        userlogin.UserId == userId &&
+                        userlogin.LoginProviderId == 1);
+            }
         }
 
         /// <summary>

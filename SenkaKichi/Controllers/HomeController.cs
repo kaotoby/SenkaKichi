@@ -12,7 +12,7 @@ namespace SenkaKichi.Controllers
 {
     public class HomeController : ControllerBase
     {
-        [OutputCache(Duration = 1200)]
+        [DonutOutputCache(Duration = 1200)]
         public async Task<ActionResult> Index() {
             if (User.Identity.IsAuthenticated && Session["User"] != null) {
                 var user = Session["User"] as AspNetUser;
@@ -27,12 +27,6 @@ namespace SenkaKichi.Controllers
                 RankPointRanking = await repository.GetAllServerRankingAsync(date, 0, 10)
             };
             return View(model);
-        }
-
-        public ActionResult About() {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
         }
 
         [ChildActionOnly]

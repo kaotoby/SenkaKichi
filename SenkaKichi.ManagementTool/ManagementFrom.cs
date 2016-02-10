@@ -95,14 +95,24 @@ namespace SenkaKichi.ManagementTool
         }
 
         private async void buttonTest_Click(object sender, EventArgs e) {
-            Log.Debug("Pressed");
-            SenkaKichi.OAuthApi.Twitter.TwitterApiManager mamger = new SenkaKichi.OAuthApi.Twitter.TwitterApiManager(new SenkaContext());
-            try {
-                Log.Debug("ready!");
-                await mamger.PostStatusesUpdateAsync(1, Guid.NewGuid().ToString("N") + "\ntest2 #test");
-                Log.Debug("OK");
-            } catch (Exception ex) {
-                Log.Debug("Fail", ex);
+            //Log.Debug("Pressed");
+            //SenkaKichi.OAuthApi.Twitter.TwitterApiManager mamger = new SenkaKichi.OAuthApi.Twitter.TwitterApiManager(new SenkaContext());
+            //try {
+            //    Log.Debug("ready!");
+            //    await mamger.PostStatusesUpdateAsync(1, Guid.NewGuid().ToString("N") + "\ntest2 #test");
+            //    Log.Debug("OK");
+            //} catch (Exception ex) {
+            //    Log.Debug("Fail", ex);
+            //}
+            using (var db = new SenkaContext()) {
+                DateInfo info = await db.DateInfoes.OrderByDescending(d=>d.DateId).FirstAsync();
+                DateTime date = info.Date;
+                for (int i = 0; i < 36; i++) {
+                    date = date.AddHours(12);
+                    db.DateInfoes.Add(new DateInfo() { Date = date });
+
+                }
+                await db.SaveChangesAsync();
             }
         }
 
@@ -250,13 +260,10 @@ namespace SenkaKichi.ManagementTool
 
         private async void buttonPostTwitter_Click(object sender, EventArgs e) {
             using (var db = new SenkaContext()) {
-                var TwitterManager = new TwitterApiManager(db);
-                await TwitterManager.PostStatusesUpdateAsync(1, "(単冠湾)");
-                await TwitterManager.PostStatusesUpdateAsync(1, "2位 5511 ユウキ＠姫柊雪菜は俺の嫁 (パラオ)");
-                await TwitterManager.PostStatusesUpdateAsync(1, "3位 5181 Dark Viper E (佐伯湾)");
-                var servers = await db.Servers.Include(s=>s.DateInfo).ToListAsync();
+                var TwitterManager = new TwitterApiManager();
+                var servers = await db.Servers.Include(s=>s.DateInfo).ToDictionaryAsync(s=>s.ServerId,s=>s);
                 int dateId = servers[1].LastUpdated;
-                if (servers.Any(s=>s.LastUpdated!=dateId)) {
+                if (servers.Any(s=>s.Value.LastUpdated!=dateId)) {
                     MessageBox.Show("Error");
                     return;
                 }
@@ -275,7 +282,7 @@ namespace SenkaKichi.ManagementTool
                 sb.AppendFormat("{0} 戦果ランキング\n", servers[1].DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankPoint[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankPoint[i].RankPoint,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, top3RankPoint[i].RankPoint,
                          player.Name, servers[player.ServerId].NickName);
                 }
                 sb.Length--;
@@ -285,7 +292,7 @@ namespace SenkaKichi.ManagementTool
                     .Include(data => data.Player)
                     .Where(data => data.DateId == dateId)
                     .Where(data => data.RankingDelta != null)
-                    .OrderByDescending(data => data.RankingDelta)
+                    .OrderByDescending(data => data.RankPointDelta)
                     .Take(3)
                     .ToArray();
                 if (top3RankDelta.Length == 0) {
@@ -297,7 +304,7 @@ namespace SenkaKichi.ManagementTool
                 sb.AppendFormat("{0} 戦果増分ランキング\n", servers[1].DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankDelta[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankDelta[i].RankPointDelta,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, top3RankDelta[i].RankPointDelta,
                          player.Name, servers[player.ServerId].NickName);
                 }
                 await TwitterManager.PostStatusesUpdateAsync(1, sb.ToString());
@@ -317,7 +324,7 @@ namespace SenkaKichi.ManagementTool
                 sb.AppendFormat("{0} 経験値増分ランキング\n", servers[1].DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankEDelta[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankEDelta[i].ExactRankPointDelta,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, Math.Round(top3RankDelta[i].ExactRankPointDelta, 2),
                          player.Name, servers[player.ServerId].NickName);
                 }
                 await TwitterManager.PostStatusesUpdateAsync(1, sb.ToString());

@@ -102,17 +102,17 @@ namespace SenkaKichi.Models
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public Task<List<SenkaData>> GetPlayerInfoAsync(int playerId, DateInfo start, int endDateId) {
+        public Task<Dictionary<int, SenkaData>> GetPlayerInfoAsync(int playerId, DateInfo start, int endDateId) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.PlayerId == playerId &&
-                        data.DateId >= start.DateId &&
-                        data.DateId <= endDateId)
-                    .OrderBy(data => data.DateId)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.PlayerId == playerId &&
+                    data.DateId >= start.DateId &&
+                    data.DateId <= endDateId)
+                .OrderBy(data => data.DateId)
+                .ToDictionaryAsync(d => d.DateId, d => d);
             //});
         }
 
@@ -123,7 +123,7 @@ namespace SenkaKichi.Models
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        public async Task<IDictionary<short, List<SenkaData>>> GetServerRankingBoundAsync(int serverId, short ranking, DateInfo start) {
+        public async Task<IDictionary<short, Dictionary<int, SenkaData>>> GetServerRankingBoundAsync(int serverId, short ranking, DateInfo start) {
             short upper = 0, lower = 0;
             if (ranking == 1) {
                 upper = 0;
@@ -144,25 +144,25 @@ namespace SenkaKichi.Models
                 upper = 500;
                 lower = 990;
             }
-            var bound = new SortedDictionary<short, List<SenkaData>>();
+            var bound = new SortedDictionary<short, Dictionary<int, SenkaData>>();
             int endDateId = CalcuateEndDateId(start);
             bound[upper] = await GetServerRankingBoundAsync(serverId, upper, start.DateId, endDateId);
             bound[lower] = await GetServerRankingBoundAsync(serverId, lower, start.DateId, endDateId);
             return bound;
         }
 
-        private Task<List<SenkaData>> GetServerRankingBoundAsync(int serverId, short ranking, int start, int end) {
+        private Task<Dictionary<int, SenkaData>> GetServerRankingBoundAsync(int serverId, short ranking, int start, int end) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.DateId >= start &&
-                        data.DateId <= end &&
-                        data.Player.ServerId == (byte)serverId &&
-                        data.Ranking == ranking)
-                    .OrderBy(data => data.DateId)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.DateId >= start &&
+                    data.DateId <= end &&
+                    data.Player.ServerId == (byte)serverId &&
+                    data.Ranking == ranking)
+                .OrderBy(data => data.DateId)
+                .ToDictionaryAsync(d => d.DateId, d => d);
             //});
         }
 
@@ -176,46 +176,48 @@ namespace SenkaKichi.Models
         public Task<List<ActivityData>> GetPlayerActivityAsync(int playerId, DateInfo end, int take) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Where(data =>
-                        data.PlayerId == playerId &&
-                        data.DateId <= end.DateId)
-                    .GroupBy(data => new {
-                        Level = data.Level,
-                        Comment = data.Comment
-                    })
-                    .Select(group => new ActivityData {
-                        Date = group.OrderBy(data => data.DateId).FirstOrDefault().DateInfo,
-                        Level = group.Key.Level,
-                        Comment = group.Key.Comment
-                    })
-                    .OrderByDescending(data => data.Date.DateId)
-                    .Take(take)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Where(data =>
+                    data.PlayerId == playerId &&
+                    data.DateId <= end.DateId)
+                .GroupBy(data => new {
+                    Level = data.Level,
+                    Comment = data.Comment
+                })
+                .Select(group => new ActivityData {
+                    Date = group.OrderBy(data => data.DateId).FirstOrDefault().DateInfo,
+                    Level = group.Key.Level,
+                    Comment = group.Key.Comment
+                })
+                .OrderByDescending(data => data.Date.DateId)
+                .Take(take)
+                .ToListAsync();
             //});
         }
 
-        public async Task<Dictionary<short, List<SenkaData>>> GetServerInfoAsync(int serverId, DateInfo start, int endDateId) {
+        public async Task<Dictionary<short, Dictionary<int, SenkaData>>> GetServerInfoAsync(int serverId, DateInfo start, int endDateId) {
             //return SenkaCache.GetAndCache(async () =>
             //{
-                var raw = await _db.SenkaDatas
-                    .Include(data => data.Player)
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.Player.ServerId == (byte)serverId &&
-                        data.DateId >= start.DateId &&
-                        data.DateId <= endDateId &&
-                        (data.Ranking == 1 ||
-                        data.Ranking == 5 ||
-                        data.Ranking == 20 ||
-                        data.Ranking == 100 ||
-                        data.Ranking == 500))
-                    .ToArrayAsync();
-                return raw.GroupBy(data => data.Ranking)
-                    .OrderBy(group => group.Key)
-                    .ToDictionary(
-                        group => group.Key, 
-                        group => group.OrderBy(d => d.DateId).ToList());
+            var raw = await _db.SenkaDatas
+                .Include(data => data.Player)
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.Player.ServerId == (byte)serverId &&
+                    data.DateId >= start.DateId &&
+                    data.DateId <= endDateId &&
+                    (data.Ranking == 1 ||
+                    data.Ranking == 5 ||
+                    data.Ranking == 20 ||
+                    data.Ranking == 100 ||
+                    data.Ranking == 500))
+                .ToArrayAsync();
+            return raw.GroupBy(data => data.Ranking)
+                .OrderBy(group => group.Key)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group
+                        .OrderBy(d => d.DateId)
+                        .ToDictionary(d => d.DateId, d => d));
             //});
         }
 
@@ -227,8 +229,8 @@ namespace SenkaKichi.Models
         public Task<DateInfo> FindDateInfoByDateAsync(DateTime date) {
             //return SenkaCache.GetAndCache(48 * 60 * 60, () =>
             //{
-                return _db.DateInfoes
-                    .FirstOrDefaultAsync(info => info.Date == date);
+            return _db.DateInfoes
+                .FirstOrDefaultAsync(info => info.Date == date);
             //});
         }
 
@@ -241,14 +243,14 @@ namespace SenkaKichi.Models
         public Task<List<SenkaData>> GetServerRankingAsync(int serverId, DateInfo info) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Include(data => data.Player)
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.DateId == info.DateId &&
-                        data.Player.ServerId == (byte)serverId)
-                    .OrderBy(data => data.Ranking)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Include(data => data.Player)
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.DateId == info.DateId &&
+                    data.Player.ServerId == (byte)serverId)
+                .OrderBy(data => data.Ranking)
+                .ToListAsync();
             //});
         }
 
@@ -262,16 +264,16 @@ namespace SenkaKichi.Models
         public Task<List<SenkaData>> GetAllServerRankingAsync(DateInfo info, int skip, int take) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Include(data => data.Player.Server)
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.DateId == info.DateId &&
-                        data.RankingAll != null)
-                    .OrderBy(data => data.RankingAll)
-                    .Skip(skip)
-                    .Take(take)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Include(data => data.Player.Server)
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.DateId == info.DateId &&
+                    data.RankingAll != null)
+                .OrderBy(data => data.RankingAll)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
             //});
         }
 
@@ -285,16 +287,16 @@ namespace SenkaKichi.Models
         public Task<List<SenkaData>> GetAllServerDeltaRankingAsync(DateInfo info, int skip, int take) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                return _db.SenkaDatas
-                    .Include(data => data.Player)
-                    .Include(data => data.DateInfo)
-                    .Where(data =>
-                        data.DateId == info.DateId &&
-                        data.ExperienceDelta != null)
-                    .OrderByDescending(data => data.ExperienceDelta)
-                    .Skip(skip)
-                    .Take(take)
-                    .ToListAsync();
+            return _db.SenkaDatas
+                .Include(data => data.Player)
+                .Include(data => data.DateInfo)
+                .Where(data =>
+                    data.DateId == info.DateId &&
+                    data.ExperienceDelta != null)
+                .OrderByDescending(data => data.ExperienceDelta)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
             //});
         }
 
@@ -307,35 +309,35 @@ namespace SenkaKichi.Models
         public Task<PlayerSearchResult[]> SearchPlayerAsync(string query, int serverId, DateInfo date, int page) {
             //return SenkaCache.GetAndCache(2 * 60 * 60, () =>
             //{
-                var keywords = query.Split(' ');
+            var keywords = query.Split(' ');
 
-                IQueryable<Player> filter = _db.Players;
-                if (serverId != 0) {
-                    filter = _db.Players.Where(player => player.ServerId == serverId);
-                }
+            IQueryable<Player> filter = _db.Players;
+            if (serverId != 0) {
+                filter = _db.Players.Where(player => player.ServerId == serverId);
+            }
 
-                return filter
-                    .Where(player =>
-                        keywords.All(word => player.Name.Contains(word))
-                    )
-                    .OrderBy(result =>
-                        keywords.Sum(word => result.Name.IndexOf(word))
-                    )
-                    .Skip((page - 1) * 20)
-                    .Take(20)
-                    .Select(player => new {
-                        Player = player,
-                        Data = player.SenkaDatas
-                                .OrderByDescending(data => data.DateId)
-                                .FirstOrDefault()
-                    })
-                    .Select(data => new PlayerSearchResult {
-                        DateInfo = data.Data.DateInfo,
-                        Player = data.Player,
-                        Comment = data.Data.Comment,
-                        Ranking = data.Data.Ranking
-                    })
-                    .ToArrayAsync();
+            return filter
+                .Where(player =>
+                    keywords.All(word => player.Name.Contains(word))
+                )
+                .OrderBy(result =>
+                    keywords.Sum(word => result.Name.IndexOf(word))
+                )
+                .Skip((page - 1) * 20)
+                .Take(20)
+                .Select(player => new {
+                    Player = player,
+                    Data = player.SenkaDatas
+                            .OrderByDescending(data => data.DateId)
+                            .FirstOrDefault()
+                })
+                .Select(data => new PlayerSearchResult {
+                    DateInfo = data.Data.DateInfo,
+                    Player = data.Player,
+                    Comment = data.Data.Comment,
+                    Ranking = data.Data.Ranking
+                })
+                .ToArrayAsync();
             //});
         }
 
@@ -347,31 +349,31 @@ namespace SenkaKichi.Models
         public Task<PlayerSuggestResult[]> SearchSuggestPlayerAsync(string query, int serverId, DateInfo date) {
             //return SenkaCache.GetAndCache(() =>
             //{
-                var keywords = query.Split(' ');
+            var keywords = query.Split(' ');
 
-                IQueryable<Player> filter = _db.Players;
-                if (serverId != 0) {
-                    filter = _db.Players.Where(player => player.ServerId == serverId);
-                }
+            IQueryable<Player> filter = _db.Players;
+            if (serverId != 0) {
+                filter = _db.Players.Where(player => player.ServerId == serverId);
+            }
 
-                return filter
-                    .Where(player =>
-                        keywords.All(word => player.Name.Contains(word))
-                    )
-                    .OrderBy(result =>
-                        keywords.Sum(word => result.Name.IndexOf(word))
-                    )
-                    .Take(8)
-                    .Select(player => new PlayerSuggestResult {
-                        Server = player.Server.NickName,
-                        Name = player.Name,
-                        Comment = player.SenkaDatas
-                                .OrderByDescending(data => data.DateId)
-                                .FirstOrDefault()
-                                .Comment,
-                        Id = player.PlayerId.ToString()
-                    })
-                    .ToArrayAsync();
+            return filter
+                .Where(player =>
+                    keywords.All(word => player.Name.Contains(word))
+                )
+                .OrderBy(result =>
+                    keywords.Sum(word => result.Name.IndexOf(word))
+                )
+                .Take(8)
+                .Select(player => new PlayerSuggestResult {
+                    Server = player.Server.NickName,
+                    Name = player.Name,
+                    Comment = player.SenkaDatas
+                            .OrderByDescending(data => data.DateId)
+                            .FirstOrDefault()
+                            .Comment,
+                    Id = player.PlayerId.ToString()
+                })
+                .ToArrayAsync();
             //});
         }
 

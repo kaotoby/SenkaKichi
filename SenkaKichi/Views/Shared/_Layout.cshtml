@@ -20,7 +20,7 @@
     <meta property="fb:app_id" content="509470212541705" />
     <meta name="twitter:card" content="@(ViewBag.TwitterCardType ?? "summary")" />
     <meta name="twitter:site:id" content="3149631090" />
-    <link rel="canonical" href="@Request.RawUrl" />
+    <link rel="canonical" href="@Request.Url.AbsoluteUri" />
     @RenderSection("Head", required: false)
 
     <script>
@@ -43,6 +43,7 @@
     @Styles.Render("~/styles/bootstrap")
     @Styles.Render("~/styles/site")
     <script async src="https://platform.twitter.com/widgets.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -64,10 +65,23 @@
         @RenderBody()
     </article>
     <footer class="panel-footer">
-        <section class="container">
-            <p>&copy; 2015 - @DateTime.Now.Year  戦果基地</p>
-            <p style="font-size:0.6em">Page created in @ViewBag.ElapsedTime ms with <a href="http://www.asp.net/mvc">ASP.NET MVC</a></p>
-        </section>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9 col-md-push-3">
+                    <div id="ad-footer">
+                        <ins class="adsbygoogle"
+                             style="display:inline-block;width:468px;height:60px"
+                             data-ad-client="ca-pub-1128932018247588"
+                             data-ad-slot="4396065151"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
+                </div>
+                <div class="col-md-3 col-md-pull-9">
+                    <p>&copy; 2015 - @DateTime.Now.Year  戦果基地</p>
+                    <p style="font-size:0.6em">Page created in @ViewBag.ElapsedTime ms with <a href="http://www.asp.net/mvc">ASP.NET MVC</a></p>
+                </div>
+            </div>
+        </div>
     </footer>
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

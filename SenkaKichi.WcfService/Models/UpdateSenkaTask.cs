@@ -114,19 +114,23 @@ namespace SenkaKichi.WcfService.Models
 
         public static void UpdateDateInfo() {
             DateTime current = DateTime.UtcNow.AddHours(6);
-            DateTime date = DateTime.UtcNow.AddHours(6);
+            DateTime date = default(DateTime);
             if (current.Hour >= 12) {
                 date = new DateTime(current.Year, current.Month, current.Day, 15, 0, 0);
             } else {
                 date = new DateTime(current.Year, current.Month, current.Day, 3, 0, 0);
             }
             using (var db = new SenkaContext()) {
-                Manager.DateInfo = db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);
-                if (Manager.DateInfo == null) {
-                    Manager.DateInfo = new DateInfo { Date = date };
-                    db.DateInfoes.Add(Manager.DateInfo);
+                if (date.Day == 1 && date.Hour == 3) {
+                    int days = DateTime.DaysInMonth(date.Year, date.Month);
+                    DateTime d = date;
+                    for (int i = 0; i < days * 2; i++) {
+                        db.DateInfoes.Add(new DateInfo { Date = d });
+                        date = date.AddHours(12);
+                    }
                     db.SaveChanges();
                 }
+                Manager.DateInfo = db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);
             }
             log.Info(string.Format("Current date: {0} ", Manager.DateInfo.DateId, Manager.DateInfo));
         }
@@ -212,7 +216,7 @@ namespace SenkaKichi.WcfService.Models
                 sb.AppendFormat("{0} 戦果ランキング\n", Manager.DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankPoint[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankPoint[i].RankPoint,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, top3RankPoint[i].RankPoint,
                          player.Name, Manager.Servers[player.ServerId].Server.NickName);
                 }
                 sb.Length--;
@@ -227,7 +231,7 @@ namespace SenkaKichi.WcfService.Models
                     .Include(data => data.Player)
                     .Where(data => data.DateId == Manager.DateInfo.DateId)
                     .Where(data => data.RankingDelta != null)
-                    .OrderByDescending(data => data.RankingDelta)
+                    .OrderByDescending(data => data.RankPointDelta)
                     .Take(3)
                     .ToArray();
                 if (top3RankDelta.Length == 0) {
@@ -239,7 +243,7 @@ namespace SenkaKichi.WcfService.Models
                 sb.AppendFormat("{0} 戦果増分ランキング\n", Manager.DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankDelta[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankDelta[i].RankPointDelta,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, top3RankDelta[i].RankPointDelta,
                          player.Name, Manager.Servers[player.ServerId].Server.NickName);
                 }
                 Manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).Wait();
@@ -265,7 +269,7 @@ namespace SenkaKichi.WcfService.Models
                 sb.AppendFormat("{0} 経験値増分ランキング\n", Manager.DateInfo);
                 for (int i = 0; i < 3; i++) {
                     var player = top3RankDelta[i].Player;
-                    sb.AppendFormat("{0}位 {1} {2} ({3})\n", i + 1, top3RankDelta[i].ExactRankPointDelta,
+                    sb.AppendFormat("{0}位 {1} {2} [{3}]\n", i + 1, Math.Round(top3RankDelta[i].ExactRankPointDelta, 2),
                          player.Name, Manager.Servers[player.ServerId].Server.NickName);
                 }
                 Manager.TwitterManager.PostStatusesUpdateAsync(1, sb.ToString()).Wait();

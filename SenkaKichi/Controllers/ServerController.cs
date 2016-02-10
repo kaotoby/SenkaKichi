@@ -12,14 +12,15 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.UI;
 using System.Collections.Generic;
+using MvcSiteMapProvider;
 
 namespace SenkaKichi.Controllers
 {
     public class ServerController : ControllerBase
     {
         // GET: Server
-        [OutputCache(Duration = 1200)]
-        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.InfoDynamicNodeProvider, SenkaKichi")]
+        [DonutOutputCache(Duration = 1200)]
+        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.InfoDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Info(int id, string date = "") {
             if (id == 0) {
                 return View("InfoAll");
@@ -50,12 +51,12 @@ namespace SenkaKichi.Controllers
             var chart = new ChartModels.Server(serverData);
             var lastData = serverData[1].Last();
             chart.StartTime = startDate.Date.ToString("s") + "Z";
-            chart.Date = lastData.DateInfo.ToString();
+            chart.Date = lastData.Value.DateInfo.ToString();
             chart.ServerName = server.Name;
 
             var model = new InfoViewModel {
                 Server = server,
-                DateInfo = lastData.DateInfo,
+                DateInfo = lastData.Value.DateInfo,
                 JsonChart = ChartModels.ConvertToJson(chart)
             };
 
@@ -68,8 +69,8 @@ namespace SenkaKichi.Controllers
         /// <param name="id">Server Id</param>
         /// <param name="page">Page number</param>
         /// <param name="date">Date in yyMMddHH formate</param>
-        [OutputCache(Duration = 1200)]
-        //[MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.RankingDynamicNodeProvider, SenkaKichi")]
+        [DonutOutputCache(Duration = 1200)]
+        [MvcSiteMapNode(DynamicNodeProvider = "SenkaKichi.SiteMap.Server.RankingDynamicNodeProvider, SenkaKichi")]
         public async Task<ActionResult> Ranking(int id, int page = 0, string date = "") {
             DateTime dateTime;
 

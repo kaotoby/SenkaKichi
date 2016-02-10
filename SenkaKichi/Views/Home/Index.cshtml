@@ -33,15 +33,15 @@
                 @{ Html.RenderPartial("~/Views/Player/_SearchPartial.cshtml"); }
                 <hr />
                 <section class="panel panel-default">
-                    <h4 class="panel-heading">経験値増分 TOP10 <small class="header-right"><time datetime="@Model.DateInfo.Date.ToString("s")">@Model.DateInfo</time></small></h4>
-                    <div class="panel-bod no-paddingy">
-                        @{ Html.RenderPartial("_RankPointDeltaRankingPartial", Model.RankPointDeltaRanking); }
-                    </div>
-                </section>
-                <section class="panel panel-default">
                     <h4 class="panel-heading">戦果 TOP10 <small class="header-right"><time datetime="@Model.DateInfo.Date.ToString("s")">@Model.DateInfo</time></small></h4>
                     <div class="panel-body no-padding">
                         @{ Html.RenderPartial("_RankPointRankingPartial", Model.RankPointRanking); }
+                    </div>
+                </section>
+                <section class="panel panel-default">
+                    <h4 class="panel-heading">経験値増分 TOP10 <small class="header-right"><time datetime="@Model.DateInfo.Date.ToString("s")">@Model.DateInfo</time></small></h4>
+                    <div class="panel-bod no-paddingy">
+                        @{ Html.RenderPartial("_RankPointDeltaRankingPartial", Model.RankPointDeltaRanking); }
                     </div>
                 </section>
             </div>

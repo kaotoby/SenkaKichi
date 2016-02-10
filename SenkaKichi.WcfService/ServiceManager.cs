@@ -38,7 +38,7 @@ namespace SenkaKichi.WcfService
 
             #endregion
             
-            TwitterManager = new TwitterApiManager(new SenkaContext());
+            TwitterManager = new TwitterApiManager();
         }
 
         public void StartTimer() {
@@ -48,7 +48,7 @@ namespace SenkaKichi.WcfService
                     .ToArray()
                     .ToDictionary(server => (int)server.ServerId, server => new ServerInfo(server));
             }
-            _timer = new Timer(TimerCallback, null, 3000, 1000);
+            _timer = new Timer(TimerCallback, null, 3000, 10000);
         }
 
         private void TimerCallback(object state) {

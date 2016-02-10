@@ -20,12 +20,18 @@ namespace SenkaKichi.DbModels
             }
         }
 
+        public short? RankPointDeltaExact {
+            get {
+                return (short?)(this.RankPointDelta - (this.RankPointDeltaExtra ?? 0));
+            }
+        }
+
         public double ExactRankPointDelta {
             get {
                 if (this.ExperienceDelta == null) {
                     return 0;
                 }
-                return this.ExperienceDelta.Value * 70 / 100000.0;
+                return Math.Round(this.ExperienceDelta.Value * 70 / 100000.0, 2);
             }
         }
 

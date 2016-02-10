@@ -22,5 +22,11 @@
     "inputFiles": [
       "Scripts/highcharts.exporting.offline.js"
     ]
+  },
+  {
+    "outputFileName": "Scripts/highcharts.lang.ja.js",
+    "inputFiles": [
+      "Scripts/highcharts.lang.ja.js"
+    ]
   }
 ]

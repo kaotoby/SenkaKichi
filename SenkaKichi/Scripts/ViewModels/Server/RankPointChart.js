@@ -26,6 +26,13 @@
         credits: {
             text: SenkaChart.Date + ' - 戦果基地',
         },
+        exporting: {
+            chartOptions: {
+                credits: {
+                    enabled: true
+                }
+            }
+        },
         xAxis: {
             type: 'datetime',
             min: Date.parse(SenkaChart.StartTime) - 3 * 3600 * 1000,
