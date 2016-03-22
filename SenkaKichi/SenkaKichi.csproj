@@ -243,6 +243,7 @@
     </Compile>
     <Compile Include="Models\ActivityData.cs" />
     <Compile Include="Models\AjaxResult.cs" />
+    <Compile Include="Models\AjaxSenkaResult.cs" />
     <Compile Include="Models\ControllerBase.cs" />
     <Compile Include="Models\SenkaRepository.cs" />
     <Compile Include="Models\SiteMap\PlayerDynamicNodeProvider.cs" />

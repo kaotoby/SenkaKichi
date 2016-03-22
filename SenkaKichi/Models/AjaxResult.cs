@@ -14,8 +14,8 @@ namespace SenkaKichi.Models
 {
     public class AjaxResult<TResult> : ActionResult
     {
-        public bool Success { get; set; }
-        public TResult Data { get; set; }
+        public bool success { get; set; }
+        public TResult data { get; set; }
 
         public override void ExecuteResult(ControllerContext context) {
             if (context == null) throw new ArgumentNullException("context");
@@ -29,18 +29,18 @@ namespace SenkaKichi.Models
 #if DEBUG
             serializerSettings.Formatting = Formatting.Indented;
 #endif
-            response.Write(JsonConvert.SerializeObject(Data, serializerSettings));
+            response.Write(JsonConvert.SerializeObject(this, serializerSettings));
         }
 
         public AjaxResult() { }
 
         public AjaxResult(bool success) {
-            Success = success;
+            this.success = success;
         }
 
         public AjaxResult(bool success, TResult data) {
-            Success = success;
-            Data = data;
+            this.success = success;
+            this.data = data;
         }
     }
 

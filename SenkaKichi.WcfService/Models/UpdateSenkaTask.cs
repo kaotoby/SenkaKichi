@@ -126,9 +126,9 @@ namespace SenkaKichi.WcfService.Models
                     DateTime d = date;
                     for (int i = 0; i < days * 2; i++) {
                         db.DateInfoes.Add(new DateInfo { Date = d });
-                        date = date.AddHours(12);
+                        d = d.AddHours(12);
+                        db.SaveChanges();
                     }
-                    db.SaveChanges();
                 }
                 Manager.DateInfo = db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);
             }

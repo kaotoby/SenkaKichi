@@ -13,6 +13,8 @@ namespace SenkaKichi.WcfService.Models
 
         public SortedSet<DateTime> Schedule { get; private set; }
 
+        public Thread CurrentThread { get; private set; }
+
         public TaskInfo(IEnumerable<DateTime> schedule) {
             Schedule = new SortedSet<DateTime>(schedule);
         }
@@ -48,7 +50,8 @@ namespace SenkaKichi.WcfService.Models
                 NextRunTime = next;
             }
 
-            new Thread(Main).Start();
+            CurrentThread = new Thread(Main);
+            CurrentThread.Start();
         }
 
         protected abstract void Main();

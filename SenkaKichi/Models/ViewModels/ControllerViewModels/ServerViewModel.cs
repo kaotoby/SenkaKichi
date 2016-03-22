@@ -10,7 +10,7 @@ namespace SenkaKichi.ViewModels.Server
     {
         public List<SenkaData> Data { get; set; }
         public DbModels.Server Server { get; set; }
-        public PagerViewModels Pager { get; set; }
+        public PagerViewModel Pager { get; set; }
     }
 
     public class InfoViewModel

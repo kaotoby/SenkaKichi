@@ -35,7 +35,7 @@ namespace SenkaKichi.WcfService
             serviceHost = new ServiceHost(typeof(Service));
 
             // Open the ServiceHostBase to create listeners and start listening for messages.
-            serviceHost.Open();
+            //serviceHost.Open();
         }
 
         protected override void OnStop() {

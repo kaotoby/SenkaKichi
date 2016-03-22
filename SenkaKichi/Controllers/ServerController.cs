@@ -94,7 +94,7 @@ namespace SenkaKichi.Controllers
                 var rankingModel = new RankingViewModel() {
                     Server = null,
                     Data = data,
-                    Pager = new PagerViewModels() {
+                    Pager = new PagerViewModel() {
                         Page = page,
                         TotalPage = 10
                     }                    
@@ -119,7 +119,7 @@ namespace SenkaKichi.Controllers
 
             var model = new RankingViewModel() {
                 Server = server,
-                Pager = new PagerViewModels() {
+                Pager = new PagerViewModel() {
                     Page = page,
                     TotalPage = 5
                 }
