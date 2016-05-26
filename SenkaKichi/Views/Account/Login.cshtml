@@ -1,0 +1,32 @@
+﻿@{
+    ViewBag.Title = "ログイン";
+}
+
+<form>
+    <div class="form-horizontal">
+        <h4>ログイン情報の入力</h4>
+        <hr />
+        <div class="form-group">
+            <div class="control-label col-md-2">メールアドレス:</div>
+            <div class="col-md-10">
+                <input class="form-control" type="email" name="name" placeholder="戦果基地のアカウント" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="control-label col-md-2">パスワード:</div>
+            <div class="col-md-10">
+                <input class="form-control" type="password" name="password" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="form-group">
+    <div class="col-md-offset-2 col-md-1">
+        <button class="btn btn-primary">ログイン</button>
+    </div>
+    <div class="col-md-1">
+        @Html.ActionLink("新規会員登録", "Register", null, new { @class = "btn btn-default" })
+    </div>
+</div>

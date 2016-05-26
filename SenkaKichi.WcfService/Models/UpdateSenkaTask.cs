@@ -122,12 +122,14 @@ namespace SenkaKichi.WcfService.Models
             }
             using (var db = new SenkaContext()) {
                 if (date.Day == 1 && date.Hour == 3) {
-                    int days = DateTime.DaysInMonth(date.Year, date.Month);
-                    DateTime d = date;
-                    for (int i = 0; i < days * 2; i++) {
-                        db.DateInfoes.Add(new DateInfo { Date = d });
-                        d = d.AddHours(12);
-                        db.SaveChanges();
+                    if (db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date) == null) {
+                        int days = DateTime.DaysInMonth(date.Year, date.Month);
+                        DateTime d = date;
+                        for (int i = 0; i < days * 2; i++) {
+                            db.DateInfoes.Add(new DateInfo { Date = d });
+                            d = d.AddHours(12);
+                            db.SaveChanges();
+                        }
                     }
                 }
                 Manager.DateInfo = db.DateInfoes.FirstOrDefault(dateInfo => dateInfo.Date == date);

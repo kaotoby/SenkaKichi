@@ -99,6 +99,16 @@ namespace SenkaKichi.Controllers
             }
         }
 
+        //[AllowAnonymous]
+        //public ActionResult Login() {
+        //    return View();
+        //}
+
+        //[AllowAnonymous]
+        //public ActionResult Register() {
+        //    return View();
+        //}
+
         #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";

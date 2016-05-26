@@ -8,6 +8,9 @@
             url: '/player/suggest?q=',
             replace: function (url, query) {
                 return url + query + '&server=' + $('#search-form select').val();
+            },
+            transform: function(response) {
+                return response.success ? response.data : [];
             }
         },
         sufficient: 7

@@ -14,6 +14,11 @@ namespace SenkaKichi.Controllers
     public class SharedController : ControllerBase
     {
         [ChildActionOnly]
+        public ActionResult _LoginPartial41() {
+            return PartialView();
+        }
+
+        [ChildActionOnly]
         public ActionResult _LoginPartial() {
             AspNetUser user = null;
 

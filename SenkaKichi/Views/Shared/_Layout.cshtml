@@ -54,7 +54,7 @@
             </div>
             <div class="navbar-header pull-right">
                 <ul class="nav navbar-nav pull-left">
-                    @*@Html.Action("_LoginPartial", "Shared", true)*@
+                    @*@Html.Action("_LoginPartial41", "Shared", true)*@
                 </ul>
             </div>
         </div>
@@ -66,21 +66,8 @@
     </article>
     <footer class="panel-footer">
         <div class="container">
-            <div class="row">
-                <div class="col-md-9 col-md-push-3">
-                    <div id="ad-footer">
-                        <ins class="adsbygoogle"
-                             style="display:inline-block;width:468px;height:60px"
-                             data-ad-client="ca-pub-1128932018247588"
-                             data-ad-slot="4396065151"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
-                </div>
-                <div class="col-md-3 col-md-pull-9">
-                    <p>&copy; 2015 - @DateTime.Now.Year  戦果基地</p>
-                    <p style="font-size:0.6em">Page created in @ViewBag.ElapsedTime ms with <a href="http://www.asp.net/mvc">ASP.NET MVC</a></p>
-                </div>
-            </div>
+            <p>&copy; 2015 - @DateTime.Now.Year  戦果基地</p>
+            <p style="font-size:0.6em">Page created in @ViewBag.ElapsedTime ms with <a href="http://www.asp.net/mvc">ASP.NET MVC</a></p>
         </div>
     </footer>
     @Scripts.Render("~/bundles/jquery")

@@ -525,6 +525,9 @@
     <Content Include="Views\Player\Activity.cshtml" />
     <Content Include="Views\Server\_RankingAllPartial.cshtml" />
     <Content Include="Views\Shared\_PagerPartial.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial41.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
